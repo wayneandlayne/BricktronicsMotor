@@ -1,0 +1,42 @@
+#######################################
+# Syntax Coloring Map For BricktronicsMotor
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+BricktronicsMotor	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+enable	KEYWORD2
+disable	KEYWORD2
+stop	KEYWORD2
+getPosition	KEYWORD2
+setPosition	KEYWORD2
+update	KEYWORD2
+pidSetUpdateFrequencyMS	KEYWORD2
+pidPrintValues	KEYWORD2
+pidGetKp	KEYWORD2
+pidGetKi	KEYWORD2
+pidGetKd	KEYWORD2
+pidSetTunings	KEYWORD2
+pidSetKp	KEYWORD2
+pidSetKi	KEYWORD2
+pidSetKd	KEYWORD2
+rawSetSpeed	KEYWORD2
+rawGetSpeed	KEYWORD2
+goToPosition	KEYWORD2
+goToAngle	KEYWORD2
+getAngle	KEYWORD2
+setAngle	KEYWORD2
+setAngleOutputMultiplier	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

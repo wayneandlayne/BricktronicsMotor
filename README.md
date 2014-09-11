@@ -1,7 +1,7 @@
 BricktronicsMotor
 =================
 
-**Arduino library for Bricktronics motor control**
+**Bricktronics library for motor control**
 
 More details at http://www.wayneandlayne.com/bricktronics/
 

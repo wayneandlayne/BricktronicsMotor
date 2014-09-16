@@ -1,7 +1,7 @@
 BricktronicsMotor
 =================
 
-**Arduino library for Bricktronics motor control**
+**Bricktronics library for motor control**
 
 More details at http://www.wayneandlayne.com/bricktronics/
 
@@ -12,6 +12,9 @@ Place the BricktronicsMotor library folder into your <arduinosketchfolder>/libra
 **This library depends on the following other Arduino libraries:**
 * [Brett Beauregard's Arduino PID_v1 Library](https://github.com/br3ttb/Arduino-PID-Library/)
 * [PJRC Encoder Library for Teensy and Arduino](https://www.pjrc.com/teensy/td_libs_Encoder.html)
+
+**One of the examples, MotorPositionControlInterrupt, uses the FlexiTimer2 library to periodically call the motor update function:**
+* [FlexiTimer2 library](https://github.com/wimleers/flexitimer2)
 
 **If you want to use motors with your Bricktronics Shield or Megashield, you may also be interested in these libraries:**
 * [BricktronicsShield Arduino Library](https://github.com/wayneandlayne/BricktronicsShield)

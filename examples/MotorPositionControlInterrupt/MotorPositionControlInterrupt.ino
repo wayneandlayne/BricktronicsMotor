@@ -32,8 +32,10 @@
 // or a 6xAA battery pack (2.1mm plug, center positive).
 
 
-// Include the Bricktronics Motor library
-#include <Motor.h>
+// Include the Bricktronics Motor library and helper libraries
+#include <Encoder.h>
+#include <PID_v1.h>
+#include <BricktronicsMotor.h>
 
 
 // This example can be run in three different ways. Pick one, and un-comment
@@ -41,19 +43,20 @@
 // for the other methods that you aren't using.
 
 // 1. With a Bricktronics Shield - Include these lines and be sure to
-// call Bricktronics::begin() in the setup() function below. Select the
-// motor port (BS_MOTOR_1 or BS_MOTOR_2) in the constructor below.
+// call BricktronicsShield::begin() in the setup() function below. Select the
+// motor port (MOTOR_1 or MOTOR_2) in the constructor below.
 //
 //#include <Wire.h>
-//#include <Bricktronics2.h>
-//Motor m = Motor(Bricktronics::BS_MOTOR_1);
+//#include <Adafruit_MCP23017.h>
+//#include <BricktronicsShield.h>
+//BricktronicsMotor m(BricktronicsShield::MOTOR_1);
 
 // 2. With a Bricktronics Megashield - Include these lines below but do not
-// call Bricktronics::being() in the setup() function below. Select the
-// desired motor port (BMS_MOTOR_1 through BMS_MOTOR_6) in the constructor below.
+// call BricktronicsShield::begin() in the setup() function below. Select the
+// desired motor port (MOTOR_1 through MOTOR_6) in the constructor below.
 //
-//#include <Bricktronics2.h>
-//Motor m = Motor(Bricktronics::BMS_MOTOR_1);
+//#include <BricktronicsMegashield.h>
+//BricktronicsMotor m(BricktronicsMegashield::MOTOR_1);
 
 // 3. With a Bricktronics Motor Driver - No additional #includes needed,
 // just update the five pin assignments in the constructor below.
@@ -67,7 +70,7 @@
 // Uno:       pins 2 and 3
 // Mega 2560: 2, 3, 21, 20, 19, and 18
 //
-//Motor m = Motor(3, 4, 10, 2, 5);
+//BricktronicsMotor m(3, 4, 10, 2, 5);
 
 
 void setup()
@@ -77,7 +80,7 @@ void setup()
 
   // Only call this line if you are using a Bricktronics Shield,
   // otherwise leave it commented-out.
-  //Bricktronics::begin();
+  //BricktronicsShield::begin();
 
   // Initialize the motor connections
   m.begin();

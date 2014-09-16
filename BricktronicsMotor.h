@@ -29,8 +29,15 @@
 #ifndef BRICKTRONICSMOTOR_H
 #define BRICKTRONICSMOTOR_H
 
-// Header files
-#include <inttypes.h>
+// Arduino header files
+#include <stdint.h>
+#if ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "WProgram.h"
+#endif
+
+// Library header files
 #include <Encoder.h>
 #include <PID_v1.h>
 #include "utility/BricktronicsSettings.h"

@@ -18,7 +18,11 @@ disable	KEYWORD2
 stop	KEYWORD2
 getPosition	KEYWORD2
 setPosition	KEYWORD2
+settledAtPosition	KEYWORD2
+setEpsilon	KEYWORD2
+getEpsilon	KEYWORD2
 update	KEYWORD2
+delayUpdateMS	KEYWORD2
 pidSetUpdateFrequencyMS	KEYWORD2
 pidPrintValues	KEYWORD2
 pidGetKp	KEYWORD2
@@ -31,7 +35,11 @@ pidSetKd	KEYWORD2
 rawSetSpeed	KEYWORD2
 rawGetSpeed	KEYWORD2
 goToPosition	KEYWORD2
+goToPositionWait	KEYWORD2
+goToPositionWaitTimeout	KEYWORD2
 goToAngle	KEYWORD2
+goToAngleWait	KEYWORD2
+goToAngleWaitTimeout	KEYWORD2
 getAngle	KEYWORD2
 setAngle	KEYWORD2
 setAngleOutputMultiplier	KEYWORD2

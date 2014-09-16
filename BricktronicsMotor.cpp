@@ -30,19 +30,19 @@
 // This is the simplified constructor that allows you to specify only the
 // five motor pins.
 BricktronicsMotor::BricktronicsMotor(uint8_t enPin, uint8_t dirPin, uint8_t pwmPin, uint8_t encoderPin1, uint8_t encoderPin2):
-             _enPin(enPin),
-             _dirPin(dirPin),
-             _pwmPin(pwmPin),
-             _enabled(false),
-             _rawSpeed(0),
-             _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, REVERSE),
-             _pidMode(BRICKTRONICS_MOTOR_PID_MODE_DISABLED),
-             _encoder(encoderPin1, encoderPin2),
-             _angleMultiplier(BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT),
-             _epsilon(BRICKTRONICS_MOTOR_EPSILON_DEFAULT),
-             _pinMode(&::pinMode),
-             _digitalWrite(&::digitalWrite),
-             _digitalRead(&::digitalRead)
+    _enPin(enPin),
+    _dirPin(dirPin),
+    _pwmPin(pwmPin),
+    _enabled(false),
+    _rawSpeed(0),
+    _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, REVERSE),
+    _pidMode(BRICKTRONICS_MOTOR_PID_MODE_DISABLED),
+    _encoder(encoderPin1, encoderPin2),
+    _angleMultiplier(BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT),
+    _epsilon(BRICKTRONICS_MOTOR_EPSILON_DEFAULT),
+    _pinMode(&::pinMode),
+    _digitalWrite(&::digitalWrite),
+    _digitalRead(&::digitalRead)
 {
     _pid.SetSampleTime(BRICKTRONICS_MOTOR_PID_SAMPLE_TIME_MS);
     _pid.SetOutputLimits(-255, +255);
@@ -51,19 +51,19 @@ BricktronicsMotor::BricktronicsMotor(uint8_t enPin, uint8_t dirPin, uint8_t pwmP
 // This is the complicated constructor that allows for overriding the
 // low-level Arduino functions.
 BricktronicsMotor::BricktronicsMotor(const BricktronicsMotorSettings &settings):
-             _enPin(settings.enPin),
-             _dirPin(settings.dirPin),
-             _pwmPin(settings.pwmPin),
-             _enabled(false),
-             _rawSpeed(0),
-             _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, REVERSE),
-             _pidMode(BRICKTRONICS_MOTOR_PID_MODE_DISABLED),
-             _encoder(settings.encoderPin1, settings.encoderPin2),
-             _angleMultiplier(BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT),
-             _epsilon(BRICKTRONICS_MOTOR_EPSILON_DEFAULT),
-             _pinMode(settings.pinMode),
-             _digitalWrite(settings.digitalWrite),
-             _digitalRead(settings.digitalRead)
+    _enPin(settings.enPin),
+    _dirPin(settings.dirPin),
+    _pwmPin(settings.pwmPin),
+    _enabled(false),
+    _rawSpeed(0),
+    _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, REVERSE),
+    _pidMode(BRICKTRONICS_MOTOR_PID_MODE_DISABLED),
+    _encoder(settings.encoderPin1, settings.encoderPin2),
+    _angleMultiplier(BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT),
+    _epsilon(BRICKTRONICS_MOTOR_EPSILON_DEFAULT),
+    _pinMode(settings.pinMode),
+    _digitalWrite(settings.digitalWrite),
+    _digitalRead(settings.digitalRead)
 {
     _pid.SetSampleTime(BRICKTRONICS_MOTOR_PID_SAMPLE_TIME_MS);
     _pid.SetOutputLimits(-255, +255);

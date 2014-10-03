@@ -56,10 +56,10 @@
 
 #define BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT      1
 // Epsilon is used to evaluate if we are at a desired position (abs(getPosition() - desiredPosition) < epsilon)
-#define BRICKTRONICS_MOTOR_EPSILON_DEFAULT               2
+#define BRICKTRONICS_MOTOR_EPSILON_DEFAULT               5
 // This constant is used to determine if the PID algorithm has settled down enough to stop calling update() and just call stop()
 // Used to try and avoid overshoot by stopping PID updates too early.
-#define BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD  2
+#define BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD  5
 
 class BricktronicsMotor
 {
@@ -69,30 +69,95 @@ class BricktronicsMotor
                           uint8_t dirPin,
                           uint8_t pwmPin,
                           uint8_t encoderPin1,
-                          uint8_t encoderPin2);
+                          uint8_t encoderPin2):
+            _enPin(enPin),
+            _dirPin(dirPin),
+            _pwmPin(pwmPin),
+            _enabled(false),
+            _rawSpeed(0),
+            _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, REVERSE),
+            _pidMode(BRICKTRONICS_MOTOR_PID_MODE_DISABLED),
+            _encoder(encoderPin1, encoderPin2),
+            _angleMultiplier(BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT),
+            _epsilon(BRICKTRONICS_MOTOR_EPSILON_DEFAULT),
+            _pinMode(&::pinMode),
+            _digitalWrite(&::digitalWrite),
+            _digitalRead(&::digitalRead)
+        {
+            _pid.SetSampleTime(BRICKTRONICS_MOTOR_PID_SAMPLE_TIME_MS);
+            _pid.SetOutputLimits(-255, +255);
+        }
 
         // Constructor - Advanced constructor accepts a BricktronicsMotorSettings struct
         // to also override the low-level Arduino functions.
-        BricktronicsMotor(const BricktronicsMotorSettings &settings);
+        BricktronicsMotor(const BricktronicsMotorSettings &settings):
+            _enPin(settings.enPin),
+            _dirPin(settings.dirPin),
+            _pwmPin(settings.pwmPin),
+            _enabled(false),
+            _rawSpeed(0),
+            _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, REVERSE),
+            _pidMode(BRICKTRONICS_MOTOR_PID_MODE_DISABLED),
+            _encoder(settings.encoderPin1, settings.encoderPin2),
+            _angleMultiplier(BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT),
+            _epsilon(BRICKTRONICS_MOTOR_EPSILON_DEFAULT),
+            _pinMode(settings.pinMode),
+            _digitalWrite(settings.digitalWrite),
+            _digitalRead(settings.digitalRead)
+        {
+            _pid.SetSampleTime(BRICKTRONICS_MOTOR_PID_SAMPLE_TIME_MS);
+            _pid.SetOutputLimits(-255, +255);
+        }
 
         // TODO Reconsider these functions, if they are a good idea, or if they are even needed...
         // Set the dir/pwm/en pins as outputs and stops the motor.
-        void begin(void);
+        void begin(void)
+        {
+            _pid.SetMode(AUTOMATIC);
+            _enabled = true;
+            stop();
+            _pinMode(_dirPin, OUTPUT);
+            _pinMode(_pwmPin, OUTPUT);
+            _pinMode(_enPin, OUTPUT);
+        }
+
         // Another name for begin()
-        void enable(void);
+        void enable(void)
+        {
+            begin();
+        }
+
         // Set the dir/pwm/en pins as inputs
-        void disable(void);
+        void disable(void)
+        {
+            _enabled = false;
+            _pinMode(_dirPin, INPUT);
+            _pinMode(_pwmPin, INPUT);
+            _pinMode(_enPin, INPUT);
+        }
+
         // Set the dir/pwm/en pins to LOW, turning off the motor
-        void stop(void);
+        void stop(void)
+        {
+            _digitalWrite(_enPin, LOW);
+            _digitalWrite(_dirPin, LOW);
+            _digitalWrite(_pwmPin, LOW);
+        }
         // TODO what about braking and coasting? Replace stop() with brake(strength?) and coast()
 
 
         // Read the encoder's current position.
-        int32_t getPosition(void);
+        int32_t getPosition(void)
+        {
+            return _encoder.read();
+        }
         // Write the encoder's current position - This will mess up any control in progress!
         //     This only sets the number corresponding to the motor's current position.
         //     Usually you just want to reset the position to zero.
-        void setPosition(int32_t pos);
+        void setPosition(int32_t pos)
+        {
+            _encoder.write(pos);
+        }
         // Motors have some slop in their encoder output readings, so these two functions
         // can be used to make a "close enough?" check. The epsilon value can be get/set
         // using these functions, and is used in the atPosition check like this:
@@ -100,52 +165,186 @@ class BricktronicsMotor
         // This function also checks to ensure that the PID algorithm has settled down enough
         // (that is, _pidOutput < BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD) that we can just stop()
         // without having to worry about coasting through the setpoint.
-        bool settledAtPosition(int32_t position);
-        void setEpsilon(int8_t epsilon);
-        int8_t getEpsilon(void);
+        bool settledAtPosition(int32_t position)
+        {
+            return (    (abs(getPosition() - position) < _epsilon)
+                     && (abs(_pidOutput) < BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD) );
+        }
+
+        void setEpsilon(int8_t epsilon)
+        {
+            _epsilon = epsilon;
+        }
+        int8_t getEpsilon(void)
+        {
+            return _epsilon;
+        }
 
 
         // Some of the functions below need to periodically check on the motor's operation
         // and update data. Use this update() call to do that.
         // Call this function as often as you can, since it will only actually update as
         // often as the frequency setpoint (defaults to 50ms), which can be updated below.
-        void update(void);
+        void update(void)
+        {
+            switch (_pidMode)
+            {
+                case BRICKTRONICS_MOTOR_PID_MODE_POSITION:
+                    _pidInput = _encoder.read();
+                    _pid.Compute();
+                    rawSetSpeed(_pidOutput);
+                    //Serial.print("pos: ");
+                    //Serial.println(_pidInput);
+                    //Serial.print("out: ");
+                    //Serial.println(_pidOutput);
+                    break;
+
+                case BRICKTRONICS_MOTOR_PID_MODE_SPEED:
+                    // TODO how can we determine the current speed if this is being called frequently
+                    break;
+
+                default: // includes BRICKTRONICS_MOTOR_PID_MODE_DISABLED
+                    break;
+            }
+        }
+
         // This function periodically calls the motor's update() function until
         // delayMS milliseconds have elapsed. Useful if you have nothing else to do.
-        void delayUpdateMS(int delayMS);
+        void delayUpdateMS(int delayMS)
+        {
+            unsigned long endTime = millis() + delayMS;
+            while (millis() < endTime)
+            {
+                update();
+                // We could put a delay(5) here, but the PID library already has a 
+                // "sample time" parameter to only run so frequent, you know?
+            }
+        }
 
 
         // PID related functions
         // Update the maximum frequency at which the PID algorithm will actually update.
-        void pidSetUpdateFrequencyMS(int timeMS);
+        void pidSetUpdateFrequencyMS(int timeMS)
+        {
+            _pid.SetSampleTime(timeMS);
+        }
+
         // Print out the PID values
-        void pidPrintValues(void);
+        void pidPrintValues(void)
+        {
+            Serial.print("SET:");
+            Serial.println(_pidSetpoint);
+            Serial.print("INP:");
+            Serial.println(_pidInput);
+            Serial.print("OUT:");
+            Serial.println(_pidOutput);
+        }
+
         // Functions for getting and setting the PID tuning parameters
-        double pidGetKp(void);
-        double pidGetKi(void);
-        double pidGetKd(void);
+        double pidGetKp(void)
+        {
+            return _pid.GetKp();
+        }
+
+        double pidGetKi(void)
+        {
+            return _pid.GetKi();
+        }
+
+        double pidGetKd(void)
+        {
+            return _pid.GetKd();
+        }
+
         // Use the combined pidSetTunings if you can, it's faster.
-        void pidSetTunings(double Kp, double Ki, double Kd);
-        void pidSetKp(double Kp);
-        void pidSetKi(double Ki);
-        void pidSetKd(double Kd);
+        void pidSetTunings(double Kp, double Ki, double Kd)
+        {
+            _pid.SetTunings(Kp, Ki, Kd);
+        }
+
+        void pidSetKp(double Kp)
+        {
+            _pid.SetTunings(Kp, _pid.GetKi(), _pid.GetKd());
+        }
+
+        void pidSetKi(double Ki)
+        {
+            _pid.SetTunings(_pid.GetKp(), Ki, _pid.GetKi());
+        }
+
+        void pidSetKd(double Kd)
+        {
+            _pid.SetTunings(_pid.GetKp(), _pid.GetKi(), Kd);
+        }
 
 
         // Raw, uncontroleld speed settings
         // There is no control of the speed here,
         // just set a value between -255 and +255 (0 = stop).
-        void rawSetSpeed(int16_t s);
+        void rawSetSpeed(int16_t s)
+        {
+            _rawSpeed = s;
+            if (s == 0)
+            {
+                stop();
+            }
+            else if (s < 0)
+            {
+                _digitalWrite(_dirPin, HIGH);
+                analogWrite(_pwmPin, 255 + s);
+                _digitalWrite(_enPin, HIGH);
+            }
+            else
+            {
+                _digitalWrite(_dirPin, LOW);
+                analogWrite(_pwmPin, s);
+                _digitalWrite(_enPin, HIGH);
+            }
+        }
+
         // Retrieves the previously-set raw speed.
-        int16_t rawGetSpeed(void);
+        int16_t rawGetSpeed(void)
+        {
+            return _rawSpeed;
+        }
 
 
         // Position control functions
-        void goToPosition(int32_t position);
+        void goToPosition(int32_t position)
+        {
+            // Swith our internal PID into position mode
+            _pidMode = BRICKTRONICS_MOTOR_PID_MODE_POSITION;
+            _pidSetpoint = position;
+        }
+
         // Go to the specified position using PID, but wait until the motor arrives
-        void goToPositionWait(int32_t position);
+        void goToPositionWait(int32_t position)
+        {
+            goToPosition(position);
+            while (!settledAtPosition(position))
+            {
+                update();
+            }
+            stop();
+        }
+
         // Same as above, but return after timeoutMS milliseconds in case it gets stuck
         // Returns true if we made it to position, false if we had a timeout
-        bool goToPositionWaitTimeout(int32_t position, uint32_t timeoutMS);
+        bool goToPositionWaitTimeout(int32_t position, uint32_t timeoutMS)
+        {
+            goToPosition(position);
+            timeoutMS += millis(); // future time when we timeout
+            while ( !settledAtPosition(position) && (millis() < timeoutMS) )
+            {
+                update();
+            }
+            stop();
+            if (millis() >= timeoutMS)
+            {
+                return false;
+            }
+            return true;
+        }
 
         // Angle control functions - 0 - 359, handles discontinuity nicely.
         // Can specify any angle, positive or negative. If you say 
@@ -153,15 +352,34 @@ class BricktronicsMotor
         // Similarly, "go to angle -60" will be "go to angle 300".
         // If you want "go 45 degrees clockwise from here", try using
         // m.goToAngle(m.getAngle() + 45);
-        void goToAngle(int32_t angle);
+        void goToAngle(int32_t angle)
+        {
+            goToPosition(_getDestPositionFromAngle(angle));
+        }
+
         // Go to the specified angle using PID, but wait until the motor arrives
-        void goToAngleWait(int32_t angle);
+        void goToAngleWait(int32_t angle)
+        {
+            goToPositionWait(_getDestPositionFromAngle(angle));
+        }
+
         // Same as above, but return after timeoutMS milliseconds in case it gets stuck
         // Returns true if we made it to the desired position, false if we had a timeout
-        bool goToAngleWaitTimeout(int32_t angle, uint32_t timeoutMS);
+        bool goToAngleWaitTimeout(int32_t angle, uint32_t timeoutMS)
+        {
+            return goToPositionWaitTimeout(_getDestPositionFromAngle(angle), timeoutMS);
+        }
 
-        uint16_t getAngle(void); // Returns the current angle (0-359)
-        void setAngle(int32_t angle); // Updates the encoder position to be the specified angle
+        uint16_t getAngle(void) // Returns the current angle (0-359)
+        {
+            return ( (getPosition() / _angleMultiplier) % 360 );
+        }
+
+        void setAngle(int32_t angle) // Updates the encoder position to be the specified angle
+        {
+            setPosition((angle % 360) * _angleMultiplier);
+        }
+
         // TODO Using integer angles means we can't do sub-degree positioning,
         // which only really becomes noticable if we scale-up the output by a lot.
 
@@ -172,7 +390,13 @@ class BricktronicsMotor
         // For example, if you have a 5:1 gear train between your motor and
         // the final output, then you can specify this value as 5.
         // Negative numbers should work just fine.
-        void setAngleOutputMultiplier(int8_t multiplier);
+        void setAngleOutputMultiplier(int8_t multiplier)
+        {
+            // Since the LEGO NXT motor encoders have 720 ticks per 360 degrees,
+            // we have to double the user's specified multiplier.
+            _angleMultiplier = multiplier << 1;
+        }
+
 
 
     //private:
@@ -198,7 +422,37 @@ class BricktronicsMotor
 
         // Uses the current angle to determine the desired destination
         // position of the motor. Used in the goToAngle* functions.
-        int32_t _getDestPositionFromAngle(int32_t angle);
+        int32_t _getDestPositionFromAngle(int32_t angle)
+        {
+            int16_t delta = (angle % 360) - getAngle();
+            Serial.print("getAngle: ");
+            Serial.println(getAngle());
+            Serial.print("angle: ");
+            Serial.println(angle);
+            Serial.print("delta pre: ");
+            Serial.println(delta);
+
+            while (delta > 180)
+            {
+                delta -= 360;
+            }
+            while (delta < -180)
+            {
+                delta += 360;
+            }
+            Serial.print("delta post: ");
+            Serial.println(delta);
+
+            // Now, delta is between -180 and +180
+            Serial.print("getPosition: ");
+            Serial.println(getPosition());
+            Serial.print("delta * _angleMultiplier: ");
+            Serial.println(delta * _angleMultiplier);
+            int32_t position = getPosition() + (delta * _angleMultiplier);
+            Serial.print("position: ");
+            Serial.println(position);
+            return position;
+        }
 
         // When checking if the motor has reached a certain position,
         // there is likely to be a small amount of "slop", and it would be

@@ -33,6 +33,10 @@
 
 
 // Include the Bricktronics Motor library and helper libraries
+// Helper libraries can be download from:
+// https://www.pjrc.com/teensy/td_libs_Encoder.html
+// https://github.com/br3ttb/Arduino-PID-Library/
+//	Be sure to rename unzipped folder PID_v1
 #include <Encoder.h>
 #include <PID_v1.h>
 #include <BricktronicsMotor.h>
@@ -43,8 +47,10 @@
 // for the other methods that you aren't using.
 
 // 1. With a Bricktronics Shield - Include these lines and be sure to
-// call BricktronicsShield::begin() in the setup() function below. Select the
-// motor port (MOTOR_1 or MOTOR_2) in the constructor below.
+// call BricktronicsShield::begin() in the setup() function below.
+// You also need to install the Adafruit MCP23017 library:
+//	https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
+// Select the motor port (MOTOR_1 or MOTOR_2) in the constructor below.
 //
 //#include <Wire.h>
 //#include <Adafruit_MCP23017.h>

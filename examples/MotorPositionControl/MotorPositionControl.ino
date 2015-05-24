@@ -16,10 +16,10 @@
 
 
 // Include the Bricktronics Motor library and helper libraries
-// Helper libraries can be download from:
+// Helper libraries can be downloaded from:
 // https://www.pjrc.com/teensy/td_libs_Encoder.html
 // https://github.com/br3ttb/Arduino-PID-Library/
-//	Be sure to rename unzipped folder PID_v1
+//      Be sure to rename unzipped folder PID_v1
 #include <Encoder.h>
 #include <PID_v1.h>
 #include <BricktronicsMotor.h>
@@ -32,7 +32,7 @@
 // 1. With a Bricktronics Shield - Include these lines and be sure to
 // call BricktronicsShield::begin() in the setup() function below.
 // You also need to install the Adafruit MCP23017 library:
-//	https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
+//      https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
 // Select the motor port (MOTOR_1 or MOTOR_2) in the constructor below.
 //
 //#include <Wire.h>
@@ -89,11 +89,10 @@ void loop()
   // m.pidSetUpdateFrequencyMS(50) to set the limit to every 50 milliseconds,
   // for example.
 
-
   // This statement doesn't actually move anything, yet.
   // It simply sets the motor's destination position (720 ticks per revolution).
-  // 360 = one-half revolution in the "forward" direction
-  m.goToPosition(360);
+  // 180 = one-quarter revolution in the "forward" direction
+  m.goToPosition(180);
 
   // To actually move the motor to the desired destination position, we need
   // to repeatedly call the update() function, which runs the PID algorithm
@@ -104,13 +103,19 @@ void loop()
   // calls the motor's update() function while waiting for the specified time
   // period (here, 1000 milliseconds). If the motor reaches the desired position
   // before 1000 ms, then we sit here until the time has expired.
+  Serial.print("Using delayUpdateMS...");
   m.delayUpdateMS(1000);
+  Serial.println("done");
+
 
   // Now we want to move the motor to a different position.
   // This time, we want to only wait as long as necessary for the motor to
   // reach the new desired position. This is very similar to how you work with
   // motors in the NXT environment.
-  m.goToPositionWait(-360);
+  Serial.print("Using goToPositionWait...");
+  m.goToPositionWait(360);
+  Serial.println("done");
+
 
   // One thing to worry about, is what if our motor gets jammed or stuck,
   // we probably don't want to get stuck in the previous function forever,
@@ -118,16 +123,27 @@ void loop()
   // This function is the same as the previous function, but it will return
   // once the desired position is reached OR if the timeout expires. It returns
   // true if the position was reached, and returns false if the timeout expired.
-  m.goToPositionWaitTimeout(720, 1000);
+  bool positionReached = m.goToPositionWaitTimeout(540, 5000);
+  Serial.print("Using goToPositionWaitTimeout...");
+  if (positionReached)
+  {
+    Serial.println("reached position");
+  }
+  else
+  {
+    Serial.println("timeout");
+  }
 
 
   // Now, let's pretend we have other things to do, and can't simply use
   // one of the waiting functions. We can do something like this:
 
-  // This is the time when we want to be done, here, 1 second from now.
+  // Set the desired position
+  m.goToPosition(0);
+
+  // This is the time when we want to be done, 1 second from now.
   long endTimeOverall = millis() + 1000;
-  // Set up our PID algorithm desired positoin
-  m.goToPosition(-720);
+  Serial.print("Using manual loop with millis()...");
   while (millis() < endTimeOverall)
   {
     Serial.println("Doing work (< 50ms each time) while motors are moving");
@@ -140,5 +156,6 @@ void loop()
 
     m.update();
   }
+  Serial.println("done");
 }
 

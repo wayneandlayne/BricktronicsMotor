@@ -16,10 +16,10 @@
 
 
 // Include the Bricktronics Motor library and helper libraries
-// Helper libraries can be download from:
+// Helper libraries can be downloaded from:
 // https://www.pjrc.com/teensy/td_libs_Encoder.html
 // https://github.com/br3ttb/Arduino-PID-Library/
-//	Be sure to rename unzipped folder PID_v1
+//      Be sure to rename unzipped folder PID_v1
 #include <Encoder.h>
 #include <PID_v1.h>
 #include <BricktronicsMotor.h>
@@ -32,7 +32,7 @@
 // 1. With a Bricktronics Shield - Include these lines and be sure to
 // call BricktronicsShield::begin() in the setup() function below.
 // You also need to install the Adafruit MCP23017 library:
-//	https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
+//      https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
 // Select the motor port (MOTOR_1 or MOTOR_2) in the constructor below.
 //
 //#include <Wire.h>
@@ -82,7 +82,7 @@ void loop()
   // the m.update() function. The update function checks the motor's current
   // position, compares it to the desired position, and decides which way and
   // how fast to rotate the motor to reach that desired position. You need to
-  // call m.update() periodically, and we've found that every 50ms works
+  // call m.update() periodically, and we've found that every 25-50ms works
   // pretty well. Since the internal PID library has a built-in rate limiting,
   // it is simplest to just call m.update() as often as you can, and it will
   // just work. You can adjust the internal update rate-limit by calling
@@ -115,7 +115,7 @@ void loop()
 
   // This statement doesn't actually move anything, yet.
   // It simply sets the motor's destination angle (360 degrees per revolution).
-  m.goToAngle(180);
+  m.goToAngle(30);
 
   // To actually move the motor to the desired destination angle, we need
   // to repeatedly call the update() function, which runs the PID algorithm
@@ -131,7 +131,7 @@ void loop()
   // Now we want to move the motor to a different angle.
   // This time, we want to only wait as long as necessary for the motor to
   // reach the new desired angle. 
-  m.goToAngleWait(270);
+  m.goToAngleWait(60);
 
   // One thing to worry about, is what if our motor gets jammed or stuck,
   // we probably don't want to get stuck in the previous function forever,
@@ -140,19 +140,40 @@ void loop()
   // once the desired angle is reached OR if the timeout expires. It returns
   // true if the angle was reached, and returns false if the timeout expired.
   m.goToAngleWaitTimeout(90, 1000);
-
-
+  
+  // Let's go to a few more angles.
+  // Notice that when we go from 330 to 30 it goes the "short way" instead of going back
+  // the long way to 30.
+  m.goToAngleWaitTimeout(180, 1000);
+  m.delayUpdateMS(1000);
+  m.goToAngleWaitTimeout(190, 1000);
+  m.delayUpdateMS(1000);
+  m.goToAngleWaitTimeout(200, 1000);
+  m.delayUpdateMS(1000);
+  m.goToAngleWaitTimeout(210, 1000);
+  m.delayUpdateMS(1000);
+  m.goToAngleWaitTimeout(240, 1000);
+  m.delayUpdateMS(1000);
+  m.goToAngleWaitTimeout(270, 1000);
+  m.delayUpdateMS(1000);
+  m.goToAngleWaitTimeout(300, 1000);
+  m.delayUpdateMS(1000);
+  m.goToAngleWaitTimeout(330, 1000);
+  m.delayUpdateMS(1000);
+  m.goToAngleWaitTimeout(30, 1000);
+  m.delayUpdateMS(1000);
+  
   // Now, let's pretend we have other things to do, and can't simply use
   // one of the waiting functions. We can do something like this:
 
+  // Set up our PID algorithm desired angle
+  m.goToAngle(-90);
   // This is the time when we want to be done, here, 1 second from now.
   long endTimeOverall = millis() + 1000;
-  // Set up our PID algorithm desired angle
-  m.goToAngle(-180);
   while (millis() < endTimeOverall)
   {
-    Serial.println("Doing work (< 50ms each time) while motors are moving");
-
+    // Serial.println("Doing work (< 50ms each time) while motors are moving");
+    //
     // doSomething();
     // if (digitalRead(myPin) == HIGH) {
     //   handleButtonPress();
@@ -161,5 +182,10 @@ void loop()
 
     m.update();
   }
+  
+  
+  // 1080 mod 360 = 0, go back to the original position
+  m.goToAngleWaitTimeout(1080, 1000);
+  m.delayUpdateMS(1000);
 }
 

@@ -15,7 +15,7 @@
 
 
 // Include the Bricktronics Motor library and helper libraries
-// Helper libraries can be download from:
+// Helper libraries can be downloaded from:
 // https://www.pjrc.com/teensy/td_libs_Encoder.html
 // https://github.com/br3ttb/Arduino-PID-Library/
 //	Be sure to rename unzipped folder PID_v1

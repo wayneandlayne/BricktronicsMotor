@@ -43,7 +43,6 @@
 #include "utility/BricktronicsSettings.h"
 
 // These are the default motor PID values for P, I, and D.
-// Using Ziegler-Nichols, Ku = 4.4, Tu oscillation period about 41 in 15s = 0.3658536585
 #define BRICKTRONICS_MOTOR_PID_KP                        2.64
 #define BRICKTRONICS_MOTOR_PID_KI                        14.432
 #define BRICKTRONICS_MOTOR_PID_KD                        0.1207317073

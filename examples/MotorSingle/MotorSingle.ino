@@ -77,17 +77,17 @@ void setup()
 void loop() 
 {
   Serial.println("Going forward.");
-  m.rawSetSpeed(75);
+  m.setFixedDrive(75);
   delay(1000);
   
-  m.rawSetSpeed(255);
+  m.setFixedDrive(255);
   delay(1000);
 
   Serial.println("Going in reverse.");
-  m.rawSetSpeed(-75);
+  m.setFixedDrive(-75);
   delay(1000);
   
-  m.rawSetSpeed(-255);
+  m.setFixedDrive(-255);
   delay(1000);
 }
 

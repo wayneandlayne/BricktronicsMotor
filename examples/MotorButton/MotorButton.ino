@@ -92,7 +92,7 @@ int theSpeed = 150;
 
 void loop()
 {
-  m.rawSetSpeed(theSpeed);
+  m.setFixedDrive(theSpeed);
   
   // Wait until the button is pressed
   while (b.isReleased())
@@ -101,8 +101,8 @@ void loop()
   }
   // To get here, the button was pushed!
 
-  // Stop the motor while the button is held down
-  m.stop();
+  // While the button is held down, turn on the dynamic brake
+  m.brake();
 
   // In order to debounce the button, we wait a little bit here
   delay(100);

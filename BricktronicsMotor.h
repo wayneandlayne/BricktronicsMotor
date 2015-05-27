@@ -46,10 +46,14 @@
 #define BRICKTRONICS_MOTOR_PID_KP                        2.64
 #define BRICKTRONICS_MOTOR_PID_KI                        14.432
 #define BRICKTRONICS_MOTOR_PID_KD                        0.1207317073
-// We can have different motor modes, for now, speed and position
-#define BRICKTRONICS_MOTOR_PID_MODE_DISABLED             0
-#define BRICKTRONICS_MOTOR_PID_MODE_POSITION             1
-#define BRICKTRONICS_MOTOR_PID_MODE_SPEED                2
+
+// We can have different motor modes
+#define BRICKTRONICS_MOTOR_MODE_COAST                    0
+#define BRICKTRONICS_MOTOR_MODE_BRAKE                    1
+#define BRICKTRONICS_MOTOR_MODE_FIXED_DRIVE              2
+#define BRICKTRONICS_MOTOR_MODE_PID_POSITION             3
+#define BRICKTRONICS_MOTOR_MODE_PID_SPEED                4
+
 // Sample time - Call update() as often as you can, but it will only update
 // as often as this value. Can be updated by the user at runtime if desired.
 #define BRICKTRONICS_MOTOR_PID_SAMPLE_TIME_MS            50
@@ -57,7 +61,7 @@
 #define BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT      1
 // Epsilon is used to evaluate if we are at a desired position (abs(getPosition() - desiredPosition) < epsilon)
 #define BRICKTRONICS_MOTOR_EPSILON_DEFAULT               5
-// This constant is used to determine if the PID algorithm has settled down enough to stop calling update() and just call stop()
+// This constant is used to determine if the PID algorithm has settled down enough to stop calling update() and just call brake()
 // Used to try and avoid overshoot by stopping PID updates too early.
 #define BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD  30
 
@@ -73,13 +77,12 @@ class BricktronicsMotor
             _enPin(enPin),
             _dirPin(dirPin),
             _pwmPin(pwmPin),
-            _enabled(false),
             _rawSpeed(0),
             _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, REVERSE),
             _pidKp(BRICKTRONICS_MOTOR_PID_KP),
             _pidKi(BRICKTRONICS_MOTOR_PID_KI),
             _pidKd(BRICKTRONICS_MOTOR_PID_KD),
-            _pidMode(BRICKTRONICS_MOTOR_PID_MODE_DISABLED),
+            _mode(BRICKTRONICS_MOTOR_MODE_COAST),
             _encoder(encoderPin1, encoderPin2),
             _angleMultiplier(BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT),
             _epsilon(BRICKTRONICS_MOTOR_EPSILON_DEFAULT),
@@ -97,13 +100,12 @@ class BricktronicsMotor
             _enPin(settings.enPin),
             _dirPin(settings.dirPin),
             _pwmPin(settings.pwmPin),
-            _enabled(false),
             _rawSpeed(0),
             _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, REVERSE),
             _pidKp(BRICKTRONICS_MOTOR_PID_KP),
             _pidKi(BRICKTRONICS_MOTOR_PID_KI),
             _pidKd(BRICKTRONICS_MOTOR_PID_KD),
-            _pidMode(BRICKTRONICS_MOTOR_PID_MODE_DISABLED),
+            _mode(BRICKTRONICS_MOTOR_MODE_COAST),
             _encoder(settings.encoderPin1, settings.encoderPin2),
             _angleMultiplier(BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT),
             _epsilon(BRICKTRONICS_MOTOR_EPSILON_DEFAULT),
@@ -115,44 +117,33 @@ class BricktronicsMotor
             _pid.SetOutputLimits(-255, +255);
         }
 
-        // TODO Reconsider these functions, if they are a good idea, or if they are even needed...
         // Set the dir/pwm/en pins as outputs and stops the motor.
         void begin(void)
         {
+            // Set timer1 frequency to about 4khz to reduce audible whine
+            TCCR1B = (TCCR1B & 0b11111000) | 0x02;
             _pid.SetMode(AUTOMATIC);
-            _enabled = true;
-            // Set timer1 frequency to about 32khz to reduce audible whine
-            TCCR1B = (TCCR1B & 0b11111000) | 0x01;
-            stop();
             _pinMode(_dirPin, OUTPUT);
             _pinMode(_pwmPin, OUTPUT);
             _pinMode(_enPin, OUTPUT);
+            coast();
         }
 
-        // Another name for begin()
-        void enable(void)
+        void coast(void)
         {
-            begin();
-        }
-
-        // Set the dir/pwm/en pins as inputs
-        void disable(void)
-        {
-            _enabled = false;
-            _pinMode(_dirPin, INPUT);
-            _pinMode(_pwmPin, INPUT);
-            _pinMode(_enPin, INPUT);
-        }
-
-        // Set the dir/pwm/en pins to LOW, turning off the motor
-        void stop(void)
-        {
+            _mode = BRICKTRONICS_MOTOR_MODE_COAST;
             _digitalWrite(_enPin, LOW);
-            _digitalWrite(_dirPin, LOW);
             _digitalWrite(_pwmPin, LOW);
+            _digitalWrite(_enPin, LOW);
         }
-        // TODO what about braking and coasting? Replace stop() with brake(strength?) and coast()
 
+        void brake(void)
+        {
+            _mode = BRICKTRONICS_MOTOR_MODE_BRAKE;
+            _digitalWrite(_enPin, HIGH);
+            _digitalWrite(_pwmPin, LOW);
+            _digitalWrite(_enPin, LOW);
+        }
 
         // Read the encoder's current position.
         int32_t getPosition(void)
@@ -166,25 +157,25 @@ class BricktronicsMotor
         {
             _encoder.write(pos);
         }
+
         // Motors have some slop in their encoder output readings, so these two functions
         // can be used to make a "close enough?" check. The epsilon value can be get/set
         // using these functions, and is used in the atPosition check like this:
         // return (abs(getPosition() - position) < _epsilon);
         // This function also checks to ensure that the PID algorithm has settled down enough
-        // (that is, _pidOutput < BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD) that we can just stop()
+        // (that is, _pidOutput < BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD) that we can just brake()
         // without having to worry about coasting through the setpoint.
-        // TODO make _epsilon unsigned
         bool settledAtPosition(int32_t position)
         {
             return (    (abs(getPosition() - position) < _epsilon)
                      && (abs(_pidOutput) < BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD) );
         }
 
-        void setEpsilon(int8_t epsilon)
+        void setEpsilon(uint8_t epsilon)
         {
             _epsilon = epsilon;
         }
-        int8_t getEpsilon(void)
+        uint8_t getEpsilon(void)
         {
             return _epsilon;
         }
@@ -196,9 +187,9 @@ class BricktronicsMotor
         // often as the frequency setpoint (defaults to 50ms), which can be updated below.
         void update(void)
         {
-            switch (_pidMode)
+            switch (_mode)
             {
-                case BRICKTRONICS_MOTOR_PID_MODE_POSITION:
+                case BRICKTRONICS_MOTOR_MODE_PID_POSITION:
                     _pidInput = _encoder.read();
                     if( abs(_pidInput - _pidSetpoint) < 5 )
                     {
@@ -209,14 +200,14 @@ class BricktronicsMotor
                         pidUpdateTunings();
                     }
                     _pid.Compute();
-                    rawSetSpeed(_pidOutput);
+                    _rawSetSpeed(_pidOutput);
                     break;
 
-                case BRICKTRONICS_MOTOR_PID_MODE_SPEED:
-                    // TODO how can we determine the current speed if this is being called frequently
+                case BRICKTRONICS_MOTOR_MODE_PID_SPEED:
+                    // TODO finish implementation of speed control
                     break;
 
-                default: // includes BRICKTRONICS_MOTOR_PID_MODE_DISABLED
+                default:
                     break;
             }
         }
@@ -308,26 +299,12 @@ class BricktronicsMotor
 
         // Raw, uncontroleld speed settings
         // There is no control of the speed here,
-        // just set a value between -255 and +255 (0 = stop).
-        void rawSetSpeed(int16_t s)
+        // just set a value between -255 and +255 (0 = brake).
+        void setFixedDrive(int16_t s)
         {
+            _mode = BRICKTRONICS_MOTOR_MODE_FIXED_DRIVE;
             _rawSpeed = s;
-            if (s == 0)
-            {
-                stop();
-            }
-            else if (s < 0)
-            {
-                _digitalWrite(_dirPin, HIGH);
-                analogWrite(_pwmPin, 255 + s);
-                _digitalWrite(_enPin, HIGH);
-            }
-            else
-            {
-                _digitalWrite(_dirPin, LOW);
-                analogWrite(_pwmPin, s);
-                _digitalWrite(_enPin, HIGH);
-            }
+            _rawSetSpeed(_rawSpeed);
         }
 
         // Retrieves the previously-set raw speed.
@@ -341,7 +318,7 @@ class BricktronicsMotor
         void goToPosition(int32_t position)
         {
             // Swith our internal PID into position mode
-            _pidMode = BRICKTRONICS_MOTOR_PID_MODE_POSITION;
+            _mode = BRICKTRONICS_MOTOR_MODE_PID_POSITION;
             _pidSetpoint = position;
         }
 
@@ -353,7 +330,7 @@ class BricktronicsMotor
             {
                 update();
             }
-            stop();
+            brake();
         }
 
         // Same as above, but return after timeoutMS milliseconds in case it gets stuck
@@ -366,7 +343,7 @@ class BricktronicsMotor
             {
                 update();
             }
-            stop();
+            brake();
             if (millis() >= timeoutMS)
             {
                 return false;
@@ -435,12 +412,11 @@ class BricktronicsMotor
         uint8_t _dirPin;
         uint8_t _pwmPin;
 
-        bool _enabled;
+        bool _mode;
         uint16_t _rawSpeed;
 
         // PID variables
         PID _pid;
-        uint8_t _pidMode;
         double _pidSetpoint, _pidInput, _pidOutput;
         double _pidKp, _pidKi, _pidKd;
 
@@ -449,6 +425,30 @@ class BricktronicsMotor
 
         // Check out the comments above for setAngleOutputMultiplier()
         int8_t _angleMultiplier;
+
+        // Raw, uncontroleld speed settings
+        // There is no control of the speed here,
+        // just set a value between -255 and +255 (0 = brake).
+        void _rawSetSpeed(int16_t s)
+        {
+            if (s == 0)
+            {
+                brake();
+            }
+            else if (s < 0)
+            {
+                _digitalWrite(_dirPin, HIGH);
+                analogWrite(_pwmPin, 255 + s);
+                _digitalWrite(_enPin, HIGH);
+            }
+            else
+            {
+                _digitalWrite(_dirPin, LOW);
+                analogWrite(_pwmPin, s);
+                _digitalWrite(_enPin, HIGH);
+            }
+        }
+
 
         // Uses the current angle to determine the desired destination
         // position of the motor. Used in the goToAngle* functions.

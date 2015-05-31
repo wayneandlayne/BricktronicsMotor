@@ -1,28 +1,28 @@
 /*
-    Bricktronics library for LEGO NXT motors.
+   BricktronicsMotor v1.2 - A software library for LEGO NXT motors.
 
-    Copyright (C) 2014 Adam Wolf, Matthew Beckler, John Baichtal
+   Copyright (C) 2015 Adam Wolf, Matthew Beckler, John Baichtal
 
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License
+   as published by the Free Software Foundation; either version 2
+   of the License, or (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    Wayne and Layne invests time and resources providing this open-source
-    code, please support W&L and open-source hardware by purchasing products
-    from https://store.wayneandlayne.com/ - Thanks!
+   Wayne and Layne invests time and resources providing this open-source
+   code, please support W&L and open-source hardware by purchasing products
+   from https://store.wayneandlayne.com/ - Thanks!
 
-    Wayne and Layne, LLC and our products are not connected to or endorsed by the LEGO Group.
-    LEGO, Mindstorms, and NXT are trademarks of the LEGO Group.
+   Wayne and Layne, LLC and our products are not connected to or endorsed by the LEGO Group.
+   LEGO, Mindstorms, and NXT are trademarks of the LEGO Group.
 */
 
 
@@ -204,7 +204,7 @@ class BricktronicsMotor
                     break;
 
                 case BRICKTRONICS_MOTOR_MODE_PID_SPEED:
-                    // TODO finish implementation of speed control
+                    // TODO create implementation of speed control
                     break;
 
                 default:
@@ -297,9 +297,9 @@ class BricktronicsMotor
         }
 
 
-        // Raw, uncontroleld speed settings
-        // There is no control of the speed here,
-        // just set a value between -255 and +255 (0 = brake).
+        // Raw, uncontrolled speed settings
+        // There is no monitoring or control of the speed here,
+        // just set a fixed drive strength between -255 and +255 (0 = brake).
         void setFixedDrive(int16_t s)
         {
             _mode = BRICKTRONICS_MOTOR_MODE_FIXED_DRIVE;
@@ -307,8 +307,8 @@ class BricktronicsMotor
             _rawSetSpeed(_rawSpeed);
         }
 
-        // Retrieves the previously-set raw speed.
-        int16_t rawGetSpeed(void)
+        // Retrieves the previously-set fixed drive strength
+        int16_t getFixedDrive(void)
         {
             return _rawSpeed;
         }
@@ -426,9 +426,9 @@ class BricktronicsMotor
         // Check out the comments above for setAngleOutputMultiplier()
         int8_t _angleMultiplier;
 
-        // Raw, uncontroleld speed settings
-        // There is no control of the speed here,
-        // just set a value between -255 and +255 (0 = brake).
+        // Raw, uncontrolled speed settings
+        // There is no monitoring or control of the speed here,
+        // just set a fixed drive strength between -255 and +255 (0 = brake).
         void _rawSetSpeed(int16_t s)
         {
             if (s == 0)

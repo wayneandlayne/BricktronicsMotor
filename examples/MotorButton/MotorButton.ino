@@ -57,7 +57,7 @@
 //BricktronicsButton b(BricktronicsMegashield::SENSOR_1);
 
 // 3. With a Bricktronics Motor Driver and Breakout board - No additional includes needed,
-// just update the pin assignments in the Motor and Button constructors below.
+// just update the pin assignments in the motor and button constructors below.
 //
 // The BricktronicsMotor() arguments are: enPin, dirPin, pwmPin, tachPinA, tachPinB
 // There are a few considerations for pin assignments:

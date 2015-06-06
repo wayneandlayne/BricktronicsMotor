@@ -40,11 +40,11 @@
 // (SENSOR_1 through SENSOR_4) in the constructors below.
 // If your chosen sensor port has jumpers (ports 3 and 4), connect pins 2-3 and 4-5.
 //
-//#include <Wire.h>
-//#include <Adafruit_MCP23017.h>
-//#include <BricktronicsShield.h>
-//BricktronicsMotor m(BricktronicsShield::MOTOR_1);
-//BricktronicsButton b(BricktronicsShield::SENSOR_1);
+#include <Wire.h>
+#include <Adafruit_MCP23017.h>
+#include <BricktronicsShield.h>
+BricktronicsMotor m(BricktronicsShield::MOTOR_1);
+BricktronicsButton b(BricktronicsShield::SENSOR_1);
 
 // 2. With a Bricktronics Megashield - Include these lines but do not
 // call BricktronicsShield::begin() in the setup() function below.
@@ -81,7 +81,7 @@ void setup()
 {
   // Only call this if you are using a Bricktronics Shield,
   // otherwise leave it commented-out.
-  //BricktronicsShield::begin();
+  BricktronicsShield::begin();
 
   // Initialize the motor and button connections
   m.begin();

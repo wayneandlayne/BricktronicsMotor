@@ -34,10 +34,10 @@
 //	https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
 // Select the motor port (MOTOR_1 or MOTOR_2) in the constructor below.
 //
-//#include <Wire.h>
-//#include <Adafruit_MCP23017.h>
-//#include <BricktronicsShield.h>
-//BricktronicsMotor m(BricktronicsShield::MOTOR_1);
+#include <Wire.h>
+#include <Adafruit_MCP23017.h>
+#include <BricktronicsShield.h>
+BricktronicsMotor m(BricktronicsShield::MOTOR_1);
 
 // 2. With a Bricktronics Megashield - Include these lines below but do not
 // call BricktronicsShield::begin() in the setup() function below. Select the
@@ -68,7 +68,7 @@ void setup()
 
   // Only call this line if you are using a Bricktronics Shield,
   // otherwise leave it commented-out.
-  //BricktronicsShield::begin();
+  BricktronicsShield::begin();
 
   // Initialize the motor connections
   m.begin();

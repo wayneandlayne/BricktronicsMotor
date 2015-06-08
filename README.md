@@ -1,7 +1,7 @@
 BricktronicsMotor
 =================
 
-**Bricktronics library for motor control**
+**BricktronicsMotor v1.2 - A software library for LEGO NXT motors.**
 
 More details at http://www.wayneandlayne.com/bricktronics/
 
@@ -17,7 +17,8 @@ Place the BricktronicsMotor library folder into your `<arduinosketchfolder>/libr
 * [FlexiTimer2 library](https://github.com/wimleers/flexitimer2)
 
 **If you want to use motors with your Bricktronics Shield or Megashield, you may also be interested in these libraries:**
-* [BricktronicsShield Arduino Library](https://github.com/wayneandlayne/BricktronicsShield)
-* [BricktronicsMegashield Arduino Library](https://github.com/wayneandlayne/BricktronicsMegashield)
+* [BricktronicsShield Arduino Library v1.2](https://github.com/wayneandlayne/BricktronicsShield)
+* [BricktronicsMegashield Arduino Library v1.2](https://github.com/wayneandlayne/BricktronicsMegashield)
 
 _Wayne and Layne, LLC and our products are not connected to or endorsed by the LEGO Group. LEGO, Mindstorms, and NXT are trademarks of the LEGO Group._
+

@@ -40,11 +40,13 @@
 // (SENSOR_1 through SENSOR_4) in the constructors below.
 // If your chosen sensor port has jumpers (ports 3 and 4), connect pins 2-3 and 4-5.
 //
-#include <Wire.h>
-#include <Adafruit_MCP23017.h>
-#include <BricktronicsShield.h>
-BricktronicsMotor m(BricktronicsShield::MOTOR_1);
-BricktronicsButton b(BricktronicsShield::SENSOR_1);
+// Config 1 - arduino:avr:uno
+//#include <Wire.h>
+//#include <Adafruit_MCP23017.h>
+//#include <BricktronicsShield.h>
+//BricktronicsMotor m(BricktronicsShield::MOTOR_1);
+//BricktronicsButton b(BricktronicsShield::SENSOR_1);
+// Config end
 
 // 2. With a Bricktronics Megashield - Include these lines but do not
 // call BricktronicsShield::begin() in the setup() function below.
@@ -52,9 +54,11 @@ BricktronicsButton b(BricktronicsShield::SENSOR_1);
 // (SENSOR_1 through SENSOR_4) in the constructors below.
 // Connect pins 2-3 and 4-5 on the chosen sensor port.
 //
-// #include <BricktronicsMegashield.h>
+// Config 2 - arduino:avr:mega:cpu=atmega2560
+//#include <BricktronicsMegashield.h>
 //BricktronicsMotor m(BricktronicsMegashield::MOTOR_1);
 //BricktronicsButton b(BricktronicsMegashield::SENSOR_1);
+// Config end
 
 // 3. With a Bricktronics Motor Driver and Breakout board - No additional includes needed,
 // just update the pin assignments in the motor and button constructors below.
@@ -73,15 +77,19 @@ BricktronicsButton b(BricktronicsShield::SENSOR_1);
 // that is, wherever pin 1 of the Breakout board is connected (also connect the grounds).
 // No worries about PWM or interrupt pins here.
 //
+// Config 3 - arduino:avr:uno
 //BricktronicsMotor m(3, 4, 10, 2, 5);
 //BricktronicsButton b(7);
+// Config end
 
 
 void setup()
 {
   // Only call this if you are using a Bricktronics Shield,
   // otherwise leave it commented-out.
-  BricktronicsShield::begin();
+  // Config 1 - arduino:avr:uno
+  //BricktronicsShield::begin();
+  // Config end
 
   // Initialize the motor and button connections
   m.begin();

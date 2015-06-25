@@ -53,17 +53,21 @@
 //      https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
 // Select the motor port (MOTOR_1 or MOTOR_2) in the constructor below.
 //
-#include <Wire.h>
-#include <Adafruit_MCP23017.h>
-#include <BricktronicsShield.h>
-BricktronicsMotor m(BricktronicsShield::MOTOR_1);
+// Config 1 - arduino:avr:uno
+//#include <Wire.h>
+//#include <Adafruit_MCP23017.h>
+//#include <BricktronicsShield.h>
+//BricktronicsMotor m(BricktronicsShield::MOTOR_1);
+// Config end
 
 // 2. With a Bricktronics Megashield - Include these lines below but do not
 // call BricktronicsShield::begin() in the setup() function below. Select the
 // desired motor port (MOTOR_1 through MOTOR_6) in the constructor below.
 //
+// Config 2 - arduino:avr:mega:cpu=atmega2560
 //#include <BricktronicsMegashield.h>
 //BricktronicsMotor m(BricktronicsMegashield::MOTOR_1);
+// Config end
 
 // 3. With a Bricktronics Motor Driver - No additional #includes needed,
 // just update the five pin assignments in the constructor below.
@@ -78,7 +82,9 @@ BricktronicsMotor m(BricktronicsShield::MOTOR_1);
 // Uno:       pins 2 and 3
 // Mega 2560: 2, 3, 21, 20, 19, and 18
 //
+// Config 3 - arduino:avr:uno
 //BricktronicsMotor m(3, 4, 10, 2, 5);
+// Config end
 
 
 void setup()
@@ -88,7 +94,9 @@ void setup()
 
   // Only call this line if you are using a Bricktronics Shield,
   // otherwise leave it commented-out.
-  BricktronicsShield::begin();
+  // Config 1 - arduino:avr:uno
+  //BricktronicsShield::begin();
+  // Config end
 
   // Initialize the motor connections
   m.begin();

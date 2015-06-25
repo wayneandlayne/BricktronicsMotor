@@ -9,5 +9,6 @@ ARDUINO=~/installers/arduino*/arduino
 for ino in `find examples/ | grep ino`; do
     echo "Verifying $ino"
     $ARDUINO --verify --board arduino:avr:uno $ino
+    echo $?
 done
 

@@ -339,8 +339,16 @@ class BricktronicsMotor
             _pidSetpoint = position;
         }
 
+        // Go to the specified position using PID, but wait for the specified number of milliseconds
+        void goToPositionWaitForDelay(int32_t position, uint32_t delayMS)
+        {
+            goToPosition(position);
+            delayUpdateMS(delayMS);
+            brake();
+        }
+
         // Go to the specified position using PID, but wait until the motor arrives
-        void goToPositionWait(int32_t position)
+        void goToPositionWaitForArrival(int32_t position)
         {
             goToPosition(position);
             while( !settledAtPosition( position ) )
@@ -352,7 +360,7 @@ class BricktronicsMotor
 
         // Same as above, but return after timeoutMS milliseconds in case it gets stuck
         // Returns true if we made it to position, false if we had a timeout
-        bool goToPositionWaitTimeout(int32_t position, uint32_t timeoutMS)
+        bool goToPositionWaitForArrivalOrTimeout(int32_t position, uint32_t timeoutMS)
         {
             goToPosition(position);
             timeoutMS += millis(); // future time when we timeout
@@ -381,17 +389,23 @@ class BricktronicsMotor
             goToPosition(_getDestPositionFromAngle(angle));
         }
 
-        // Go to the specified angle using PID, but wait until the motor arrives
-        void goToAngleWait(int32_t angle)
+        // Go to the specified angle using PID, but wait for the specified number of milliseconds
+        void goToAngleWaitForDelay(int32_t angle, uint32_t delayMS)
         {
-            goToPositionWait(_getDestPositionFromAngle(angle));
+            goToPositionWaitForDelay(_getDestPositionFromAngle(angle), delayMS);
+        }
+
+        // Go to the specified angle using PID, but wait until the motor arrives
+        void goToAngleWaitForArrival(int32_t angle)
+        {
+            goToPositionWaitForArrival(_getDestPositionFromAngle(angle));
         }
 
         // Same as above, but return after timeoutMS milliseconds in case it gets stuck
         // Returns true if we made it to the desired position, false if we had a timeout
-        bool goToAngleWaitTimeout(int32_t angle, uint32_t timeoutMS)
+        bool goToAngleWaitForArrivalOrTimeout(int32_t angle, uint32_t timeoutMS)
         {
-            return goToPositionWaitTimeout(_getDestPositionFromAngle(angle), timeoutMS);
+            return goToPositionWaitForArrivalOrTimeout(_getDestPositionFromAngle(angle), timeoutMS);
         }
 
         // Returns the current angle (0-359)

@@ -116,12 +116,21 @@ void loop()
   Serial.println("done");
 
 
+  // The two functions above can be combined using this single function:
+  Serial.print("Using goToPositionWaitForDelay...");
+  m.goToPositionWaitForDelay(270, 1000);
+  Serial.println("done");
+
+  // We can check the motor's current position:
+  Serial.print("Current position: ");
+  Serial.println(m.getPosition());
+
   // Now we want to move the motor to a different position.
   // This time, we want to only wait as long as necessary for the motor to
   // reach the new desired position. This is very similar to how you work with
   // motors in the NXT environment.
-  Serial.print("Using goToPositionWait...");
-  m.goToPositionWait(360);
+  Serial.print("Using goToPositionWaitForArrival...");
+  m.goToPositionWaitForArrival(360);
   Serial.println("done");
 
 
@@ -131,8 +140,8 @@ void loop()
   // This function is the same as the previous function, but it will return
   // once the desired position is reached OR if the timeout expires. It returns
   // true if the position was reached, and returns false if the timeout expired.
-  bool positionReached = m.goToPositionWaitTimeout(540, 5000);
-  Serial.print("Using goToPositionWaitTimeout...");
+  Serial.print("Using goToPositionWaitForArrivalOrTimeout...");
+  bool positionReached = m.goToPositionWaitForArrivalOrTimeout(540, 5000);
   if (positionReached)
   {
     Serial.println("reached position");
@@ -165,5 +174,47 @@ void loop()
     m.update();
   }
   Serial.println("done");
+
+
+  // There are also a few functions for very basic motor control
+
+  // Brake
+  // Shorts the motor windings, which will quickly bring it to a stop.
+  // This mode does not lock the motor in place electrically or mechanically.
+  // You may also be interested in the hold() function below.
+  m.setFixedDrive(255);
+  Serial.println("Full speed ahead!");
+  delay(1000);
+  Serial.print("Turning on dynamic brake...");
+  m.brake();
+  Serial.print("done - Notice that you can still turn the motor by hand.");
+  delay(5000);
+
+  // Coast
+  // Disconnects the motor windings. Excess back-EMF will be shunted
+  // through the motor driver's protection diodes and/or the body diodes
+  // in the H-bridge. This will not actively slow-down the motor.
+  m.setFixedDrive(255);
+  Serial.println("Full speed ahead!");
+  delay(1000);
+  Serial.print("Turning on coast...");
+  m.coast();
+  Serial.print("done - Notice that you can still turn the motor by hand, probably easier to turn than with the brake on.");
+  delay(5000);
+
+  // Hold
+  // Similar to brake(), but this function sets up a goToPosition() for the
+  // current position, effectively locking the motor in place. That is, it
+  // will resist any efforts to turn the motor, and will constantly try to
+  // restore the motor to it's position when you call hold(). Just like
+  // goToPosition(), you need to periodically call update().
+  m.setFixedDrive(255);
+  Serial.println("Full speed ahead!");
+  delay(1000);
+  Serial.print("Turning on hold...");
+  m.hold();
+  Serial.print("done - Notice that it's difficult to turn the motor by hand, and the motor restores its original hold position. You do need to keep calling update() to make this work.");
+  m.delayUpdateMS(5000);
+
 }
 

@@ -136,10 +136,13 @@ void loop()
   // before 1000 ms, then we sit here until the time has expired.
   m.delayUpdateMS(1000);
 
+  // The previous two statements can be combined into a single function call:
+  //m.goToAngleWaitForDelay(30, 1000);
+
   // Now we want to move the motor to a different angle.
   // This time, we want to only wait as long as necessary for the motor to
   // reach the new desired angle. 
-  m.goToAngleWait(60);
+  m.goToAngleWaitForArrival(60);
 
   // One thing to worry about, is what if our motor gets jammed or stuck,
   // we probably don't want to get stuck in the previous function forever,
@@ -147,28 +150,28 @@ void loop()
   // This function is the same as the previous function, but it will return
   // once the desired angle is reached OR if the timeout expires. It returns
   // true if the angle was reached, and returns false if the timeout expired.
-  m.goToAngleWaitTimeout(90, 1000);
+  m.goToAngleWaitForArrivalOrTimeout(90, 1000);
   
   // Let's go to a few more angles.
   // Notice that when we go from 330 to 30 it goes the "short way" instead of going back
   // the long way to 30.
-  m.goToAngleWaitTimeout(180, 1000);
+  m.goToAngleWaitForArrivalOrTimeout(180, 1000);
   m.delayUpdateMS(1000);
-  m.goToAngleWaitTimeout(190, 1000);
+  m.goToAngleWaitForArrivalOrTimeout(190, 1000);
   m.delayUpdateMS(1000);
-  m.goToAngleWaitTimeout(200, 1000);
+  m.goToAngleWaitForArrivalOrTimeout(200, 1000);
   m.delayUpdateMS(1000);
-  m.goToAngleWaitTimeout(210, 1000);
+  m.goToAngleWaitForArrivalOrTimeout(210, 1000);
   m.delayUpdateMS(1000);
-  m.goToAngleWaitTimeout(240, 1000);
+  m.goToAngleWaitForArrivalOrTimeout(240, 1000);
   m.delayUpdateMS(1000);
-  m.goToAngleWaitTimeout(270, 1000);
+  m.goToAngleWaitForArrivalOrTimeout(270, 1000);
   m.delayUpdateMS(1000);
-  m.goToAngleWaitTimeout(300, 1000);
+  m.goToAngleWaitForArrivalOrTimeout(300, 1000);
   m.delayUpdateMS(1000);
-  m.goToAngleWaitTimeout(330, 1000);
+  m.goToAngleWaitForArrivalOrTimeout(330, 1000);
   m.delayUpdateMS(1000);
-  m.goToAngleWaitTimeout(30, 1000);
+  m.goToAngleWaitForArrivalOrTimeout(30, 1000);
   m.delayUpdateMS(1000);
   
   // Now, let's pretend we have other things to do, and can't simply use
@@ -193,7 +196,7 @@ void loop()
   
   
   // 1080 mod 360 = 0, go back to the original position
-  m.goToAngleWaitTimeout(1080, 1000);
+  m.goToAngleWaitForArrivalOrTimeout(1080, 1000);
   m.delayUpdateMS(1000);
 }
 

@@ -45,27 +45,36 @@
 // These are the default motor PID values for P, I, and D.
 // Tested on an unloaded NXT 2.0 motor, you may want to adjust the
 // PID constants based on whatever you have connect to your motor.
-#define BRICKTRONICS_MOTOR_PID_KP                        2.64
-#define BRICKTRONICS_MOTOR_PID_KI                        14.432
-#define BRICKTRONICS_MOTOR_PID_KD                        0.1207317073
+#define BRICKTRONICS_MOTOR_PID_KP                           2.64
+#define BRICKTRONICS_MOTOR_PID_KI                           14.432
+#define BRICKTRONICS_MOTOR_PID_KD                           0.1207317073
 
 // We can have different motor modes
-#define BRICKTRONICS_MOTOR_MODE_COAST                    0
-#define BRICKTRONICS_MOTOR_MODE_BRAKE                    1
-#define BRICKTRONICS_MOTOR_MODE_FIXED_DRIVE              2
-#define BRICKTRONICS_MOTOR_MODE_PID_POSITION             3
-#define BRICKTRONICS_MOTOR_MODE_PID_SPEED                4
+#define BRICKTRONICS_MOTOR_MODE_COAST                       0
+#define BRICKTRONICS_MOTOR_MODE_BRAKE                       1
+#define BRICKTRONICS_MOTOR_MODE_FIXED_DRIVE                 2
+#define BRICKTRONICS_MOTOR_MODE_PID_POSITION                3
+#define BRICKTRONICS_MOTOR_MODE_PID_SPEED                   4
 
 // Sample time - Call update() as often as you can, but it will only update
 // as often as this value. Can be updated by the user at runtime if desired.
-#define BRICKTRONICS_MOTOR_PID_SAMPLE_TIME_MS            50
+#define BRICKTRONICS_MOTOR_PID_SAMPLE_TIME_MS               50
 
-#define BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT      1
+#define BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT         1
 // Epsilon is used to evaluate if we are at a desired position (abs(getPosition() - desiredPosition) < epsilon)
-#define BRICKTRONICS_MOTOR_EPSILON_DEFAULT               5
+#define BRICKTRONICS_MOTOR_EPSILON_DEFAULT                  5
 // This constant is used to determine if the PID algorithm has settled down enough to stop calling update() and just call brake()
 // Used to try and avoid overshoot by stopping PID updates too early.
-#define BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD  30
+#define BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD     30
+
+// Sometimes it works better if you use more conservative PID tunings
+// when the motor is nearing its desired position. You can use these
+// settings to control how close it must be to switch to conservative
+// tunings mode, and how much to scale the PID values in this mode.
+// To disable this feature, set the distance to 0 and scaling to 1.
+#define BRICKTRONICS_MOTOR_CONSERVATIVE_DISTANCE_DEFAULT    5
+#define BRICKTRONICS_MOTOR_CONSERVATIVE_SCALING_DEFAULT     8
+
 
 class BricktronicsMotor
 {
@@ -88,6 +97,8 @@ class BricktronicsMotor
             _encoder(encoderPin1, encoderPin2),
             _angleMultiplier(BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT),
             _epsilon(BRICKTRONICS_MOTOR_EPSILON_DEFAULT),
+            _conservativeDistance(BRICKTRONICS_MOTOR_CONSERVATIVE_DISTANCE_DEFAULT),
+            _conservativeScaling(BRICKTRONICS_MOTOR_CONSERVATIVE_SCALING_DEFAULT),
             _pinMode(&::pinMode),
             _digitalWrite(&::digitalWrite),
             _digitalRead(&::digitalRead)
@@ -111,6 +122,8 @@ class BricktronicsMotor
             _encoder(settings.encoderPin1, settings.encoderPin2),
             _angleMultiplier(BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT),
             _epsilon(BRICKTRONICS_MOTOR_EPSILON_DEFAULT),
+            _conservativeDistance(BRICKTRONICS_MOTOR_CONSERVATIVE_DISTANCE_DEFAULT),
+            _conservativeScaling(BRICKTRONICS_MOTOR_CONSERVATIVE_SCALING_DEFAULT),
             _pinMode(settings.pinMode),
             _digitalWrite(settings.digitalWrite),
             _digitalRead(settings.digitalRead)
@@ -212,9 +225,9 @@ class BricktronicsMotor
             {
                 case BRICKTRONICS_MOTOR_MODE_PID_POSITION:
                     _pidInput = _encoder.read();
-                    if( abs( _pidInput - _pidSetpoint ) < 5 )
+                    if( abs( _pidInput - _pidSetpoint ) < _conservativeDistance )
                     {
-                        pidUpdateTuningsConservative(8);
+                        pidUpdateTuningsConservative(_conservativeScaling);
                     }
                     else
                     {
@@ -509,6 +522,14 @@ class BricktronicsMotor
         // the functions above, and is used in position check like this:
         // abs(getPosition() - checkPosition) > _epsilon
         uint8_t _epsilon;
+
+        // Sometimes it works better if you use more conservative PID tunings
+        // when the motor is nearing its desired position. You can use these
+        // settings to control how close it must be to switch to conservative
+        // tunings mode, and how much to scale the PID values in this mode.
+        // To disable this feature, set the distance to 0 and scaling to 1.
+        uint8_t _conservativeDistance;
+        uint8_t _conservativeScaling;
 
         // For the Bricktronics Shield, which has an I2C I/O expander chip, we need a way to
         // override some common Arduino functions. We use function pointers here to handle this.

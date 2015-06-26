@@ -12,8 +12,8 @@
 // simply set the motor to a new desired position whenever we like, and the
 // interrupt will automatically call the motor's update() function periodically.
 //
-// This example uses Timer 2 to generate the interrupts, which breaks the
-// analogWrite (PWM) output on the following pins:
+// This example uses the FlexiTimer2 library to generate the interrupts, which
+// breaks the analogWrite (PWM) output on the following pins:
 //      Arduino UNO: Pins 3 and 11
 //          On the Bricktronics Shield, this will only interfere with the
 //          TIP120 transitor marked Q4 (you probably aren't using this.)
@@ -29,18 +29,18 @@
 // (1 amp preferably). Two options that work really well are a 9V wall adapter
 // or a 6xAA battery pack (2.1mm plug, center positive).
 
-
 // Include the Bricktronics Motor library and helper libraries
 // Helper libraries can be download from:
 // https://www.pjrc.com/teensy/td_libs_Encoder.html
 // https://github.com/br3ttb/Arduino-PID-Library/
 //      Be sure to rename unzipped folder PID_v1
-// https://github.com/wimleers/flexitimer2
-//      Be sure to rename unzipped folder FlexiTimer2
 #include <Encoder.h>
 #include <PID_v1.h>
-#include <FlexiTimer2.h>
 #include <BricktronicsMotor.h>
+
+// Install the FlexiTimer2 library from https://github.com/wimleers/flexitimer2
+//      Be sure to rename the unzipped folder FlexiTimer2
+#include <FlexiTimer2.h>
 
 
 // This example can be run in three different ways. Pick one, and un-comment

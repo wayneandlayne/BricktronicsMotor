@@ -85,6 +85,8 @@ void setup()
 
 void loop() 
 {
+  Serial.println("");
+  
   // The position control works by creating a desired rotation position (as
   // measured by the motor's position encoders), and then periodically calling
   // the m.update() function. The update function checks the motor's current
@@ -114,7 +116,6 @@ void loop()
   Serial.print("Using delayUpdateMS...");
   m.delayUpdateMS(1000);
   Serial.println("done");
-
 
   // The two functions above can be combined using this single function:
   Serial.print("Using goToPositionWaitForDelay...");
@@ -163,8 +164,6 @@ void loop()
   Serial.print("Using manual loop with millis()...");
   while (millis() < endTimeOverall)
   {
-    Serial.println("Doing work (< 50ms each time) while motors are moving");
-
     // doSomething();
     // if (digitalRead(myPin) == HIGH) {
     //   handleButtonPress();
@@ -185,21 +184,21 @@ void loop()
   m.setFixedDrive(255);
   Serial.println("Full speed ahead!");
   delay(1000);
-  Serial.print("Turning on dynamic brake...");
+  Serial.println("Turning on dynamic brake...");
   m.brake();
-  Serial.print("done - Notice that you can still turn the motor by hand.");
+  Serial.println("done - Notice that you can still turn the motor by hand.");
   delay(5000);
 
   // Coast
   // Disconnects the motor windings. Excess back-EMF will be shunted
   // through the motor driver's protection diodes and/or the body diodes
   // in the H-bridge. This will not actively slow-down the motor.
-  m.setFixedDrive(255);
+  m.setFixedDrive(-255);
   Serial.println("Full speed ahead!");
   delay(1000);
-  Serial.print("Turning on coast...");
+  Serial.println("Turning on coast...");
   m.coast();
-  Serial.print("done - Notice that you can still turn the motor by hand, probably easier to turn than with the brake on.");
+  Serial.println("done - Notice that you can still turn the motor by hand.");
   delay(5000);
 
   // Hold
@@ -208,12 +207,14 @@ void loop()
   // will resist any efforts to turn the motor, and will constantly try to
   // restore the motor to it's position when you call hold(). Just like
   // goToPosition(), you need to periodically call update().
-  m.setFixedDrive(255);
+  m.setFixedDrive(-255);
   Serial.println("Full speed ahead!");
   delay(1000);
-  Serial.print("Turning on hold...");
+  Serial.println("Turning on hold...");
   m.hold();
-  Serial.print("done - Notice that it's difficult to turn the motor by hand, and the motor restores its original hold position. You do need to keep calling update() to make this work.");
+  Serial.println("done - Notice that it's difficult to turn the motor by hand");
+  Serial.println("and the motor restores its original hold position.");
+  Serial.println("You do need to keep calling update() to make this work.");
   m.delayUpdateMS(5000);
 
 }

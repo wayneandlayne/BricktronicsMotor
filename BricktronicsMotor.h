@@ -181,7 +181,7 @@ class BricktronicsMotor
         // Read the encoder's current position.
         int32_t getPosition(void)
         {
-            return _encoder.read();
+            return(_encoder.read());
         }
         // Write the encoder's current position - This will mess up any control in progress!
         //     This only sets the number corresponding to the motor's current position.
@@ -458,7 +458,7 @@ class BricktronicsMotor
         uint8_t _dirPin;
         uint8_t _pwmPin;
 
-        bool _mode;
+        uint8_t _mode;
         uint16_t _rawSpeed;
 
         // PID variables

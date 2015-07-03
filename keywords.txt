@@ -30,7 +30,6 @@ pidGetKi	KEYWORD2
 pidGetKd	KEYWORD2
 pidSetTunings	KEYWORD2
 pidUpdateTunings	KEYWORD2
-pidUpdateTuningsConservative	KEYWORD2
 pidSetKp	KEYWORD2
 pidSetKi	KEYWORD2
 pidSetKd	KEYWORD2

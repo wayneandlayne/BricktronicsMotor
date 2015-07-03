@@ -103,6 +103,7 @@ void loop()
   // It simply sets the motor's destination position (720 ticks per revolution).
   // 180 = one-quarter revolution in the "forward" direction
   m.goToPosition(180);
+  Serial.print("Using goToPosition(180) with delayUpdateMS...");
 
   // To actually move the motor to the desired destination position, we need
   // to repeatedly call the update() function, which runs the PID algorithm
@@ -113,14 +114,15 @@ void loop()
   // calls the motor's update() function while waiting for the specified time
   // period (here, 1000 milliseconds). If the motor reaches the desired position
   // before 1000 ms, then we sit here until the time has expired.
-  Serial.print("Using delayUpdateMS...");
   m.delayUpdateMS(1000);
   Serial.println("done");
+  m.delayUpdateMS(2000);
 
   // The two functions above can be combined using this single function:
-  Serial.print("Using goToPositionWaitForDelay...");
-  m.goToPositionWaitForDelay(270, 1000);
+  Serial.print("Using goToPositionWaitForDelay(360)...");
+  m.goToPositionWaitForDelay(360, 1000);
   Serial.println("done");
+  m.delayUpdateMS(2000);
 
   // We can check the motor's current position:
   Serial.print("Current position: ");
@@ -130,9 +132,10 @@ void loop()
   // This time, we want to only wait as long as necessary for the motor to
   // reach the new desired position. This is very similar to how you work with
   // motors in the NXT environment.
-  Serial.print("Using goToPositionWaitForArrival...");
-  m.goToPositionWaitForArrival(360);
+  Serial.print("Using goToPositionWaitForArrival(540)...");
+  m.goToPositionWaitForArrival(540);
   Serial.println("done");
+  m.delayUpdateMS(2000);
 
 
   // One thing to worry about, is what if our motor gets jammed or stuck,
@@ -141,8 +144,8 @@ void loop()
   // This function is the same as the previous function, but it will return
   // once the desired position is reached OR if the timeout expires. It returns
   // true if the position was reached, and returns false if the timeout expired.
-  Serial.print("Using goToPositionWaitForArrivalOrTimeout...");
-  bool positionReached = m.goToPositionWaitForArrivalOrTimeout(540, 5000);
+  Serial.print("Using goToPositionWaitForArrivalOrTimeout(720)...");
+  bool positionReached = m.goToPositionWaitForArrivalOrTimeout(720, 5000);
   if (positionReached)
   {
     Serial.println("reached position");
@@ -151,6 +154,7 @@ void loop()
   {
     Serial.println("timeout");
   }
+  m.delayUpdateMS(2000);
 
 
   // Now, let's pretend we have other things to do, and can't simply use
@@ -161,7 +165,7 @@ void loop()
 
   // This is the time when we want to be done, 1 second from now.
   long endTimeOverall = millis() + 1000;
-  Serial.print("Using manual loop with millis()...");
+  Serial.print("Using manual loop with millis() back to position 0...");
   while (millis() < endTimeOverall)
   {
     // doSomething();
@@ -173,6 +177,7 @@ void loop()
     m.update();
   }
   Serial.println("done");
+  m.delayUpdateMS(2000);
 
 
   // There are also a few functions for very basic motor control
@@ -183,7 +188,7 @@ void loop()
   // You may also be interested in the hold() function below.
   m.setFixedDrive(255);
   Serial.println("Full speed ahead!");
-  delay(1000);
+  delay(100);
   Serial.println("Turning on dynamic brake...");
   m.brake();
   Serial.println("done - Notice that you can still turn the motor by hand.");
@@ -195,7 +200,7 @@ void loop()
   // in the H-bridge. This will not actively slow-down the motor.
   m.setFixedDrive(-255);
   Serial.println("Full speed ahead!");
-  delay(1000);
+  delay(100);
   Serial.println("Turning on coast...");
   m.coast();
   Serial.println("done - Notice that you can still turn the motor by hand.");
@@ -209,7 +214,7 @@ void loop()
   // goToPosition(), you need to periodically call update().
   m.setFixedDrive(-255);
   Serial.println("Full speed ahead!");
-  delay(1000);
+  delay(100);
   Serial.println("Turning on hold...");
   m.hold();
   Serial.println("done - Notice that it's difficult to turn the motor by hand");
@@ -217,5 +222,7 @@ void loop()
   Serial.println("You do need to keep calling update() to make this work.");
   m.delayUpdateMS(5000);
 
+  // Reset motor to position 0
+  m.goToPositionWaitForDelay(0, 2000);
 }
 

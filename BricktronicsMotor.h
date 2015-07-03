@@ -65,7 +65,7 @@
 #define BRICKTRONICS_MOTOR_EPSILON_DEFAULT                  5
 // This constant is used to determine if the PID algorithm has settled down enough to stop calling update() and just call brake()
 // Used to try and avoid overshoot by stopping PID updates too early.
-#define BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD     22
+#define BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD     30
 
 class BricktronicsMotor
 {

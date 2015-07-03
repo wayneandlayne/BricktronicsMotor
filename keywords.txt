@@ -37,11 +37,13 @@ pidSetKd	KEYWORD2
 setFixedDrive	KEYWORD2
 getFixedDrive	KEYWORD2
 goToPosition	KEYWORD2
-goToPositionWait	KEYWORD2
-goToPositionWaitTimeout	KEYWORD2
+goToPositionWaitForDelay	KEYWORD2
+goToPositionWaitForArrival	KEYWORD2
+goToPositionWaitForArrivalOrTimeout	KEYWORD2
 goToAngle	KEYWORD2
-goToAngleWait	KEYWORD2
-goToAngleWaitTimeout	KEYWORD2
+goToAngleWaitForDelay	KEYWORD2
+goToAngleWaitForArrival	KEYWORD2
+goToAngleWaitForArrivalOrTimeout	KEYWORD2
 getAngle	KEYWORD2
 setAngle	KEYWORD2
 setAngleOutputMultiplier	KEYWORD2

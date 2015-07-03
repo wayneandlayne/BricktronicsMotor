@@ -111,6 +111,11 @@ void setup()
 void updateMotorInterrupt(void)
 {
     m.update();
+    // If you have multiple motors, be sure to call all their update
+    // functions here in the interrupt handler...
+    // m2.update();
+    // m3.update();
+    // ...
 }
 
 void loop() 

@@ -132,13 +132,17 @@ void loop()
   // This statement doesn't actually move anything, yet.
   // It simply sets the motor's destination position (720 ticks per revolution).
   // 180 = one-quarter revolution in the "forward" direction
+  Serial.println("Using goToPosition(180)...");
   m.goToPosition(180);
 
   // Since we have already set up the timer interrupt, we don't have to worry
   // about what we do in loop() here. The motor will correctly have its update()
   // function called at regular intervals.
+  Serial.println("Calling delay(1000) works fine because the interrupt handles calling update().");
   delay(1000);
 
+
+  Serial.println("Going to position 360...");
   m.goToPosition(360);
 
   Serial.println("Here is a long statement that will take a long time to transmit via serial...but our motor will keep working all the while!");
@@ -147,6 +151,8 @@ void loop()
   // You'll find that the motor resists being moved, since the calls to update()
   // detect that the motor has been moved and works to restore its position to 360.
 
+  Serial.println("Delaying for 10 seconds - You'll notice the motor is holding its position,");
+  Serial.println("and will fight you if you try to manually move the motor.");
   delay(10000);
 }
 

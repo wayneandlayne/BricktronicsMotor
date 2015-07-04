@@ -80,7 +80,8 @@ class BricktronicsMotor
             _dirPin(dirPin),
             _pwmPin(pwmPin),
             _rawSpeed(0),
-            _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, REVERSE),
+            _reversed(false),
+            _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, DIRECT),
             _pidKp(BRICKTRONICS_MOTOR_PID_KP),
             _pidKi(BRICKTRONICS_MOTOR_PID_KI),
             _pidKd(BRICKTRONICS_MOTOR_PID_KD),
@@ -103,7 +104,8 @@ class BricktronicsMotor
             _dirPin(settings.dirPin),
             _pwmPin(settings.pwmPin),
             _rawSpeed(0),
-            _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, REVERSE),
+            _reversed(true), // See note below about why this is set to true for Bricktronics Shield / Megashield
+            _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, DIRECT),
             _pidKp(BRICKTRONICS_MOTOR_PID_KP),
             _pidKi(BRICKTRONICS_MOTOR_PID_KI),
             _pidKd(BRICKTRONICS_MOTOR_PID_KD),
@@ -455,19 +457,34 @@ class BricktronicsMotor
         // Be sure to check out coast(), brake(), and hold().
         void _rawSetSpeed(int16_t s)
         {
+            if( _reversed )
+            {
+                s = -s;
+            }
+
             if( s < 0 )
             {
                 _digitalWrite(_dirPin, HIGH);
                 analogWrite(_pwmPin, 255 + s);
-                _digitalWrite(_enPin, HIGH);
             }
             else
             {
                 _digitalWrite(_dirPin, LOW);
                 analogWrite(_pwmPin, s);
-                _digitalWrite(_enPin, HIGH);
             }
+
+            // Enable drivers
+            _digitalWrite(_enPin, HIGH);
         }
+
+        // If you reverse the speed/direction pins, the motor runs backwards.
+        // Use this value to switch how your speed settings are applied.
+        // See _rawSetSpeed above.
+        // The Bricktronics Shield / Megashield have their speed/direction
+        // signals reversed from the canonical naming used on the Bricktronics
+        // Motor Driver and other uses, so the Bricktronics Shield / Megashield
+        // constructor sets this to true.
+        bool _reversed;
 
 
         // Uses the current angle to determine the desired destination

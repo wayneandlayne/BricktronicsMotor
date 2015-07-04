@@ -124,11 +124,6 @@ class BricktronicsMotor
         // Set the dir/pwm/en pins as outputs and sets the motor to coast.
         void begin(void)
         {
-        #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__) || defined(__AVR_ATmega8__)
-            // Set timer1 frequency to about 32 kHz to reduce audible whine
-            TCCR1B = (TCCR1B & 0b11111000) | 0x01;
-        #endif
-
             _pid.SetMode(AUTOMATIC);
             _pinMode(_dirPin, OUTPUT);
             _pinMode(_pwmPin, OUTPUT);

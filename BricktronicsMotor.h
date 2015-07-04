@@ -104,7 +104,7 @@ class BricktronicsMotor
             _dirPin(settings.dirPin),
             _pwmPin(settings.pwmPin),
             _rawSpeed(0),
-            _reversed(true), // See note below about why this is set to true for Bricktronics Shield / Megashield
+            _reversed(settings.reversedMotorDrive), // See note below about why this is set to true for Bricktronics Shield
             _pid(&_pidInput, &_pidOutput, &_pidSetpoint, BRICKTRONICS_MOTOR_PID_KP, BRICKTRONICS_MOTOR_PID_KI, BRICKTRONICS_MOTOR_PID_KD, DIRECT),
             _pidKp(BRICKTRONICS_MOTOR_PID_KP),
             _pidKi(BRICKTRONICS_MOTOR_PID_KI),
@@ -480,10 +480,10 @@ class BricktronicsMotor
         // If you reverse the speed/direction pins, the motor runs backwards.
         // Use this value to switch how your speed settings are applied.
         // See _rawSetSpeed above.
-        // The Bricktronics Shield / Megashield have their speed/direction
-        // signals reversed from the canonical naming used on the Bricktronics
-        // Motor Driver and other uses, so the Bricktronics Shield / Megashield
-        // constructor sets this to true.
+        // The Bricktronics Shield has the speed/direction signals reversed
+        // from the canonical naming used on the Bricktronics Motor Driver and
+        // Bricktronics Megashield, so the Bricktronics Shield constructor
+        // sets this to true.
         bool _reversed;
 
 

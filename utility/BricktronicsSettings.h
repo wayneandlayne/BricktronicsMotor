@@ -41,6 +41,7 @@ typedef struct BricktronicsMotorSettings
    uint8_t pwmPin;
    uint8_t encoderPin1;
    uint8_t encoderPin2;
+   bool reversedMotorDrive;
    void (*pinMode)(uint8_t, uint8_t);
    void (*digitalWrite)(uint8_t, uint8_t);
    int (*digitalRead)(uint8_t);

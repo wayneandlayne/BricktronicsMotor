@@ -62,9 +62,9 @@
 // just update the five pin assignments in the constructor below.
 // The arguments are: enPin, dirPin, pwmPin, encoderPin1, encoderPin2
 // There are a few considerations for pin assignments:
-// A. pwmPin needs to be a pin with PWM capabilities (supports analogWrite)
-// Uno:       pins 3, 5, 6, 9, 10, and 11
-// Mega 2560: pins 2 to 13 and 44 to 46
+// A. pwmPin needs to be a pin with PWM capabilities (that is, it supports analogWrite)
+//      Uno:       pins 3, 5, 6, 9, 10, and 11
+//      Mega 2560: pins 2 - 13 and 44 - 46
 // B. There are three ways to connect the encoder pins (labeled T1/T2 on the board).
 // ** Best performance: Both signals are connected to true interrupt pins (listed below).
 // ** Good performance: The FIRST signal (T1) is connected to an interrupt pin, the second signa is a regular pin. This is the mode used for the Bricktronics Shield/Megashield. For this mode it is CRITICAL that the true interrupt pin is used for T1 and not T2.
@@ -73,8 +73,8 @@
 //   the constructor, otherwise the encoder will be connected backwards and the
 //   PID algorithm will get all confused and freak out.
 // Location of true interrupt pins:
-// Uno:       pins 2 and 3
-// Mega 2560: pins 2, 3, 21, 20, 19, and 18
+//      Uno:       pins 2 and 3
+//      Mega 2560: pins 2, 3, 21, 20, 19, and 18
 //
 // Config 3 - arduino:avr:uno
 //BricktronicsMotor m(3, 4, 10, 2, 5);

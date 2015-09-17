@@ -153,11 +153,11 @@ class BricktronicsMotor
             _digitalWrite(_enPin, LOW);
         }
 
-        // Similar to brake(), this function sets up a goToPosition() for the
+        // Similar to brake(), but this function sets up a goToPosition() for the
         // current position, effectively locking the motor in place. That is, it
         // will resist any efforts to turn the motor, and will constantly try to
-        // restore the motor to it's position when you call hold(). Just like
-        // goToPosition(), you need to periodically call update().
+        // restore the motor to the position it had when you called hold().
+        // Just like with goToPosition(), you need to periodically call update().
         void hold(void)
         {
             goToPosition(getPosition());

@@ -168,22 +168,22 @@ Update the maximum frequency at which the PID algorithm will actually update. De
 Print out the PID values to the serial port, including the setpoint, the input, and the output.
 
 
-## `double pidGetKp(void)
+## `double pidGetKp(void)`
 
 Return the PID proportional tuning parameter Kp.
 
 
-## `double pidGetKi(void)
+## `double pidGetKi(void)`
 
 Return the PID integral tuning parameter Ki.
 
 
-## `double pidGetKd(void)
+## `double pidGetKd(void)`
 
 Return the PID derivative tuning parameter Kd.
 
 
-## `void pidSetTunings(double Kp, double Ki, double Kd)
+## `void pidSetTunings(double Kp, double Ki, double Kd)`
 
 Set the three PID tuning parameters.
 

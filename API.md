@@ -158,52 +158,106 @@ Some of the functions below need to periodically check on the motor's operation 
 This function periodically calls update() until delayMS milliseconds have elapsed. Useful if you have nothing else to do but sit and wait for delayMS while updating the motor's PID algorithm.
 
 
+# Raw, uncontrolled speed settings
+
+## `void setFixedDrive(int16_t s)`
+
+Sets the raw motor drive strength. There is no monitoring or control of the speed here, just set a fixed drive strength between -255 and +255.
+
+## `int16_t getFixedDrive(void)`
+
+Retrieves the previously-set fixed drive speed.
+
+
+# Position control functions
+
+## `void goToPosition(int32_t position)`
+
+Switches PID control into position-tracking mode, and sets the desired motor position to the first argument. You need to periodically call update() in order for PID modes to work correctly.
+
+## `void goToPositionWaitForDelay(int32_t position, uint32_t delayMS)`
+
+Go to the specified position using PID, but wait for the specified number of milliseconds before returning.
+
+## `void goToPositionWaitForArrival(int32_t position)`
+
+Go to the specified position using PID, but wait until the motor arrives. Can be vulnerable to getting stuck forever if the motor never reaches the desired position.
+
+## `bool goToPositionWaitForArrivalOrTimeout(int32_t position, uint32_t timeoutMS)`
+
+Same as goToPositionWaitForArrival above, but return after timeoutMS milliseconds in case it gets stuck. Returns true if we made it to position, false if we had a timeout.
+
+
+# Angle control functions
+
+These are the angle control functions (0 - 359 degrees), that handle discontinuity nicely. Can specify any angle, positive or negative. If you say "go to angle 721" it will be the same as "go to angle 1". Similarly, "go to angle -60" will be "go to angle 300". If you want "go 45 degrees clockwise from here", try using m.goToAngle(m.getAngle() + 45);
+
+## `void goToAngle(int32_t angle)`
+
+Sets desired motor angle and sets the motor for PID mode. You need to periodically call update() in order for PID modes to work correctly.
+
+## `void goToAngleWaitForDelay(int32_t angle, uint32_t delayMS)`
+
+Go to the specified angle using PID, but wait for the specified number of milliseconds before returning.
+
+## `void goToAngleWaitForArrival(int32_t angle)`
+
+Go to the specified angle using PID, but wait until the motor arrives. Can be vulnerable to getting stuck forever if the motor never reaches the desired angle.
+
+## `bool goToAngleWaitForArrivalOrTimeout(int32_t angle, uint32_t timeoutMS)`
+
+Same as goToAngleWaitForArrival above, but return after timeoutMS milliseconds in case it gets stuck. Returns true if we made it to angle, false if we had a timeout.
+
+## `uint16_t getAngle(void)`
+
+Returns the current angle, in the range of (0 - 359) degrees.
+
+## `void setAngle(int32_t angle)`
+
+Updates the current encoder position to be the specified angle.
+
+## `void setAngleOutputMultiplier(int8_t multiplier)`
+
+For the angle control, the user can specify a different multiplier between motor encoder ticks and "output rotations", defaults to 1. Use this setting if your motor is connected to a gear train that makes a different number of motor rotations per output rotation.
+
+For example, if you have a 5:1 gear train between your motor and the final output, then you can specify this value as 5. Negative numbers should work just fine.
+
+
+# PID functions
+
 ## `void pidSetUpdateFrequencyMS(int timeMS)`
 
 Update the maximum frequency at which the PID algorithm will actually update. Defaults to 50.
-
 
 ## `void pidPrintValues(void)`
 
 Print out the PID values to the serial port, including the setpoint, the input, and the output.
 
-
 ## `double pidGetKp(void)`
 
 Return the PID proportional tuning parameter Kp.
-
 
 ## `double pidGetKi(void)`
 
 Return the PID integral tuning parameter Ki.
 
-
 ## `double pidGetKd(void)`
 
 Return the PID derivative tuning parameter Kd.
-
 
 ## `void pidSetTunings(double Kp, double Ki, double Kd)`
 
 Set the three PID tuning parameters.
 
-
 ## `void pidSetKp(double Kp)`
 
 Set the PID proportional tuning parameter Kp.
-
 
 ## `void pidSetKi(double Ki)`
 
 Set the PID proportional tuning parameter Ki.
 
-
 ## `void pidSetKd(double Kd)`
 
 Set the PID proportional tuning parameter Kd.
-
-
-# More API to come...
-
-
 

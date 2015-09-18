@@ -316,7 +316,7 @@ class BricktronicsMotor
             _rawSetSpeed(_rawSpeed);
         }
 
-        // Retrieves the previously-set fixed drive strength
+        // Retrieves the previously-set fixed drive speed
         int16_t getFixedDrive(void)
         {
             return _rawSpeed;

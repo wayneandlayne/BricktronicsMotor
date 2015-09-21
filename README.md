@@ -31,7 +31,7 @@ Place the BricktronicsMotor library folder into your `<arduinosketchfolder>/libr
 * `void goToAngle(int32_t angle)` - There is a whole family of functions for moving to an angle (0 - 355 degrees)
 * `void pidSetTunings(double Kp, double Ki, double Kd)` - Update the PID tuning parameters
 * `bool settledAtPosition(int32_t position)` - Check if the motor has reached the desired position, accounting for PID output and a deadband around the desired position.
-* More API details in [API.md](API.md)...
+* More API details in [API.md](API.md)
 
 
 **If you want to use motors with your Bricktronics Shield or Megashield, you may also be interested in these libraries:**

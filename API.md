@@ -66,6 +66,8 @@ BricktronicsMotor m(3, 4, 10, 2, 5);
 void setup()
 {
     Serial.begin(115200);
+    // If using a Bricktronics Shield, you need to call
+    // BricktronicsShield::begin();
     m.begin();
 }
 

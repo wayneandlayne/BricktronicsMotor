@@ -89,7 +89,7 @@ void loop()
 }
 ```
 
-# Constructors and begin()
+# Constructors and `begin()`
 
 #### `BricktronicsMotor(uint8_t enPin, uint8_t dirPin, uint8_t pwmPin, uint8_t encoderPin1, uint8_t encoderPin2)`
 

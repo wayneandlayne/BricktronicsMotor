@@ -66,7 +66,7 @@
 //      Mega 2560: pins 2 - 13 and 44 - 46
 // B. There are three ways to connect the encoder pins (labeled T1/T2 on the board).
 // ** Best performance: Both signals are connected to true interrupt pins (listed below).
-// ** Good performance: The FIRST signal (T1) is connected to an interrupt pin, the second signa is a regular pin. This is the mode used for the Bricktronics Shield/Megashield. For this mode it is CRITICAL that the true interrupt pin is used for T1 and not T2.
+// ** Good performance: The FIRST signal (T1) is connected to an interrupt pin, the second signal is a regular pin. This is the mode used for the Bricktronics Shield/Megashield. For this mode it is CRITICAL that the true interrupt pin is used for T1 and not T2.
 // ** Low performance: Both signals are connected to non-interrupt pins.
 // Regardless of which performance mode used, you MUST list the pin T1 before T2 in
 //   the constructor, otherwise the encoder will be connected backwards and the

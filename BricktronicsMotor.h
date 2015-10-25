@@ -134,10 +134,12 @@ class BricktronicsMotor
         // Disconnects the motor windings. Excess back-EMF will be shunted
         // through the motor driver's protection diodes and/or the body diodes
         // in the H-bridge. This will not actively slow-down the motor.
+        // The L293D(D) chip used for Bricktronics v1 isn't great for
+        // doing coasting, so disabling the drivers is the best we can do.
         void coast(void)
         {
             _mode = BRICKTRONICS_MOTOR_MODE_COAST;
-            _digitalWrite(_enPin, LOW);
+            _digitalWrite(_dirPin, LOW);
             _digitalWrite(_pwmPin, LOW);
             _digitalWrite(_enPin, LOW);
         }
@@ -145,12 +147,14 @@ class BricktronicsMotor
         // Shorts the motor windings, which will quickly bring it to a stop.
         // This mode does not lock the motor in place electrically or mechanically.
         // You may also be interested in the hold() function below.
+        // The L293D(D) chip used for Bricktronics v1 isn't great for
+        // doing braking, so enabling the drivers and shorting A/B is the best we can do.
         void brake(void)
         {
             _mode = BRICKTRONICS_MOTOR_MODE_BRAKE;
-            _digitalWrite(_enPin, HIGH);
+            _digitalWrite(_dirPin, LOW);
             _digitalWrite(_pwmPin, LOW);
-            _digitalWrite(_enPin, LOW);
+            _digitalWrite(_enPin, HIGH);
         }
 
         // Similar to brake(), but this function sets up a goToPosition() for the

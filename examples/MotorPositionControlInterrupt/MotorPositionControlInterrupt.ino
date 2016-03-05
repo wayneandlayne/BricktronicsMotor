@@ -60,7 +60,7 @@
 //      https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
 // Select the motor port (MOTOR_1 or MOTOR_2) in the constructor below.
 //
-// Config 1 - WNLCFGBS
+// Config 1 - CFG_WNL_BS
 //#include <Wire.h>
 //#include <Adafruit_MCP23017.h>
 //#include <BricktronicsShield.h>
@@ -71,7 +71,7 @@
 // call BricktronicsShield::begin() in the setup() function below. Select the
 // desired motor port (MOTOR_1 through MOTOR_6) in the constructor below.
 //
-// Config 2 - WNLCFGBMS
+// Config 2 - CFG_WNL_BMS
 //#include <BricktronicsMegashield.h>
 //BricktronicsMotor m(BricktronicsMegashield::MOTOR_1);
 // Config end
@@ -94,7 +94,7 @@
 //      Uno:       pins 2 and 3
 //      Mega 2560: pins 2, 3, 21, 20, 19, and 18
 //
-// Config 3 - WNLCFGNS
+// Config 3 - CFG_WNL_NS
 //BricktronicsMotor m(3, 4, 10, 2, 5);
 // Config end
 
@@ -106,7 +106,7 @@ void setup()
 
   // Only call this line if you are using a Bricktronics Shield,
   // otherwise leave it commented-out.
-  // Config 1 - WNLCFGBS
+  // Config 1 - CFG_WNL_BS
   //BricktronicsShield::begin();
   // Config end
 

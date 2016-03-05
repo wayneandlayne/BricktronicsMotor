@@ -47,7 +47,7 @@
 // (SENSOR_1 through SENSOR_4) in the constructors below.
 // If your chosen sensor port has jumpers (ports 3 and 4), connect pins 2-3 and 4-5.
 //
-// Config 1 - arduino:avr:uno
+// Config 1 - WNLCFGBS
 //#include <Wire.h>
 //#include <Adafruit_MCP23017.h>
 //#include <BricktronicsShield.h>
@@ -61,7 +61,7 @@
 // (SENSOR_1 through SENSOR_4) in the constructors below.
 // Connect pins 2-3 and 4-5 on the chosen sensor port.
 //
-// Config 2 - arduino:avr:mega:cpu=atmega2560
+// Config 2 - WNLCFGBMS
 //#include <BricktronicsMegashield.h>
 //BricktronicsMotor m(BricktronicsMegashield::MOTOR_1);
 //BricktronicsButton b(BricktronicsMegashield::SENSOR_1);
@@ -89,7 +89,7 @@
 // that is, wherever pin 1 of the Breakout board is connected (also connect the grounds).
 // No worries about PWM or interrupt pins here.
 //
-// Config 3 - arduino:avr:uno
+// Config 3 - WNLCFGNS
 //BricktronicsMotor m(3, 4, 10, 2, 5);
 //BricktronicsButton b(7);
 // Config end
@@ -99,7 +99,7 @@ void setup()
 {
   // Only call this if you are using a Bricktronics Shield,
   // otherwise leave it commented-out.
-  // Config 1 - arduino:avr:uno
+  // Config 1 - WNLCFGBS
   //BricktronicsShield::begin();
   // Config end
 

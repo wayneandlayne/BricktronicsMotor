@@ -5,7 +5,8 @@ BricktronicsMotor
 
 More details at http://www.wayneandlayne.com/bricktronics/
 
-To download. click the "Download ZIP" button on the right side of this page. Rename the uncompressed folder BricktronicsMotor. Check that the BricktronicsMotor folder contains BricktronicsMotor.cpp and BricktronicsMotor.h
+**To Download**
+Click the "Clone or download" button on the upper-right side of this page below the pink bar, then select "Download ZIP". Rename the uncompressed folder BricktronicsMotor. Check that the BricktronicsMotor folder contains BricktronicsMotor.cpp and BricktronicsMotor.h
 
 Place the BricktronicsMotor library folder into your `<arduinosketchfolder>/libraries/` folder. You may need to create the libraries subfolder if this is your first installed library. Restart the Arduino IDE.
 

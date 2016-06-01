@@ -1,1 +1,0 @@
-../VerifySketchConfig/VerifySketchConfig.py

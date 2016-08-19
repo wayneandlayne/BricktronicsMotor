@@ -1,19 +1,27 @@
-// Bricktronics Example: MotorSingle
+// Bricktronics Example: MotorSingleBricktronicsMotorDriver
 // http://www.wayneandlayne.com/bricktronics
-// This example uses a LEGO NXT Motor.
 //
 // This example starts the motor at an intermediate speed,
-// then speeds it up to full speed, and does the same in reverse.
+// speeds it up to full speed, then does the same but in reverse.
 //
 // This example uses a motor, so it needs more power than a USB port can give.
 // We really don't recommend running motors off of USB ports (they will be
-// slow and sluggish, other things won't quite work right, things can get hot)
-// it's just not a good idea.  Use an external power supply that provides
+// slow and sluggish, other things won't quite work right, things can get hot).
+// It's just not a good idea.  Use an external power supply that provides
 // between 7.2 and 9 volts DC, and can provide at least 600 mA per motor
 // (1 amp preferably). Two options that work really well are a 9V wall adapter
-// or a 6xAA battery pack (2.1mm plug, center positive).
+// or a 6xAA battery pack, with a 2.1mm plug (center positive).
 //
-// Written in 2015 by Matthew Beckler and Adam Wolf for Wayne and Layne, LLC
+// Hardware used:
+// * Wayne and Layne Bricktronics Motor Driver
+//   https://store.wayneandlayne.com/products/bricktronics-motor-driver.html
+// * LEGO NXT or EV3 Motor
+//
+// Software libraries used:
+// * Wayne and Layne BricktronicsMotor library
+//   https://github.com/wayneandlayne/BricktronicsMotor
+//
+// Written in 2016 by Matthew Beckler and Adam Wolf for Wayne and Layne, LLC
 // To the extent possible under law, the author(s) have dedicated all
 //   copyright and related and neighboring rights to this software to the
 //   public domain worldwide. This software is distributed without any warranty.
@@ -21,44 +29,11 @@
 //   with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>. 
 
 
-// Include the Bricktronics Motor library and helper libraries
-// Helper libraries can be downloaded from:
-// https://www.pjrc.com/teensy/td_libs_Encoder.html
-// https://github.com/br3ttb/Arduino-PID-Library/
-//	Be sure to rename unzipped folder PID_v1
-#include <Encoder.h>
-#include <PID_v1.h>
+// Include the Bricktronics libraries
 #include <BricktronicsMotor.h>
 
 
-// This example can be run in three different ways. Pick one, and un-comment
-// the code lines corresponding to your chosen method. Comment-out the lines
-// for the other methods that you aren't using.
-
-// 1. With a Bricktronics Shield - Include these lines and be sure to
-// call BricktronicsShield::begin() in the setup() function below.
-// You also need to install the Adafruit MCP23017 library:
-//	https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
-// Select the motor port (MOTOR_1 or MOTOR_2) in the constructor below.
-//
-// Config 1 - CFG_WNL_BS
-//#include <Wire.h>
-//#include <Adafruit_MCP23017.h>
-//#include <BricktronicsShield.h>
-//BricktronicsMotor m(BricktronicsShield::MOTOR_1);
-// Config end
-
-// 2. With a Bricktronics Megashield - Include these lines below but do not
-// call BricktronicsShield::begin() in the setup() function below. Select the
-// desired motor port (MOTOR_1 through MOTOR_6) in the constructor below.
-//
-// Config 2 - CFG_WNL_BMS
-//#include <BricktronicsMegashield.h>
-//BricktronicsMotor m(BricktronicsMegashield::MOTOR_1);
-// Config end
-
-// 3. With a Bricktronics Motor Driver - No additional #includes needed,
-// just update the five pin assignments in the constructor below.
+// Update the five pin assignments in the constructor below.
 // The arguments are: enPin, dirPin, pwmPin, encoderPin1, encoderPin2
 // There are a few considerations for pin assignments:
 // A. pwmPin needs to be a pin with PWM capabilities (that is, it supports analogWrite)
@@ -74,22 +49,13 @@
 // Location of true interrupt pins:
 //      Uno:       pins 2 and 3
 //      Mega 2560: pins 2, 3, 21, 20, 19, and 18
-//
-// Config 3 - CFG_WNL_NS
-//BricktronicsMotor m(3, 4, 10, 2, 5);
-// Config end
+BricktronicsMotor m(3, 4, 10, 2, 5);
 
 
 void setup()
 {
   // Be sure to set your serial console to 115200 baud
   Serial.begin(115200);
-
-  // Only call this line if you are using a Bricktronics Shield,
-  // otherwise leave it commented-out.
-  // Config 1 - CFG_WNL_BS
-  //BricktronicsShield::begin();
-  // Config end
 
   // Initialize the motor connections
   m.begin();

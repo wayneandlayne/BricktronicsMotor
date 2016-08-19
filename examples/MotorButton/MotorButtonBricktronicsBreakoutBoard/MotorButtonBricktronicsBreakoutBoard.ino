@@ -1,6 +1,5 @@
-// Bricktronics Example: MotorButton
+// Bricktronics Example: MotorButtonBricktronicsMotorDriver
 // http://www.wayneandlayne.com/bricktronics
-// This example uses a LEGO NXT Motor and a Pushbutton sensor.
 //
 // This example starts the motor at full speed, then waits for
 // the button to be pressed and released, then reverses direction.
@@ -15,7 +14,21 @@
 // (1 amp preferably). Two options that work really well are a 9V wall adapter
 // or a 6xAA battery pack (2.1mm plug, center positive).
 //
-// Written in 2015 by Matthew Beckler and Adam Wolf for Wayne and Layne, LLC
+// Hardware used:
+// * Wayne and Layne Bricktronics Motor Driver
+//   https://store.wayneandlayne.com/products/bricktronics-motor-driver.html
+// * Wayne and Layne Bricktronics Breakout Board
+//   https://store.wayneandlayne.com/products/bricktronics-breakout-board.html
+// * LEGO NXT or EV3 Motor
+// * LEGO NXT Pushbutton Sensor
+//
+// Software libraries used:
+// * Wayne and Layne BricktronicsMotor library
+//   https://github.com/wayneandlayne/BricktronicsMotor
+// * Wayne and Layne BricktronicsButton library
+//   https://github.com/wayneandlayne/BricktronicsButton
+//
+// Written in 2016 by Matthew Beckler and Adam Wolf for Wayne and Layne, LLC
 // To the extent possible under law, the author(s) have dedicated all
 //   copyright and related and neighboring rights to this software to the
 //   public domain worldwide. This software is distributed without any warranty.
@@ -23,52 +36,12 @@
 //   with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>. 
 
 
-// Include the Bricktronics Motor library and helper libraries
-// Helper libraries can be downloaded from:
-// https://www.pjrc.com/teensy/td_libs_Encoder.html
-// https://github.com/br3ttb/Arduino-PID-Library/
-//	Be sure to rename unzipped folder PID_v1
-#include <Encoder.h>
-#include <PID_v1.h>
+// Include the Bricktronics libraries
 #include <BricktronicsMotor.h>
-// Include the Bricktronics Button libraries
 #include <BricktronicsButton.h>
 
 
-// This example can be run in three different ways. Pick one, and un-comment
-// the code lines corresponding to your chosen method. Comment-out the lines
-// for the other methods that you aren't using.
-
-// 1. With a Bricktronics Shield - Include these lines and be sure to
-// call BricktronicsShield::begin() in the setup() function below.
-// You also need to install the Adafruit MCP23017 library:
-//	https://github.com/adafruit/Adafruit-MCP23017-Arduino-Library
-// Select the motor port (MOTOR_1 or MOTOR_2) and sensor port
-// (SENSOR_1 through SENSOR_4) in the constructors below.
-// If your chosen sensor port has jumpers (ports 3 and 4), connect pins 2-3 and 4-5.
-//
-// Config 1 - CFG_WNL_BS
-//#include <Wire.h>
-//#include <Adafruit_MCP23017.h>
-//#include <BricktronicsShield.h>
-//BricktronicsMotor m(BricktronicsShield::MOTOR_1);
-//BricktronicsButton b(BricktronicsShield::SENSOR_1);
-// Config end
-
-// 2. With a Bricktronics Megashield - Include these lines but do not
-// call BricktronicsShield::begin() in the setup() function below.
-// Select the desired motor port (MOTOR_1 through MOTOR_6) and sensor port
-// (SENSOR_1 through SENSOR_4) in the constructors below.
-// Connect pins 2-3 and 4-5 on the chosen sensor port.
-//
-// Config 2 - CFG_WNL_BMS
-//#include <BricktronicsMegashield.h>
-//BricktronicsMotor m(BricktronicsMegashield::MOTOR_1);
-//BricktronicsButton b(BricktronicsMegashield::SENSOR_1);
-// Config end
-
-// 3. With a Bricktronics Motor Driver - No additional #includes needed,
-// just update the five pin assignments in the constructor below.
+// For the motor, update the five pin assignments in the constructor below.
 // The arguments are: enPin, dirPin, pwmPin, encoderPin1, encoderPin2
 // There are a few considerations for pin assignments:
 // A. pwmPin needs to be a pin with PWM capabilities (supports analogWrite)
@@ -85,24 +58,24 @@
 //      Uno:       pins 2 and 3
 //      Mega 2560: pins 2, 3, 21, 20, 19, and 18
 //
-// The BricktronicsButton() argument is simply the pin the button is connected to,
-// that is, wherever pin 1 of the Breakout board is connected (also connect the grounds).
-// No worries about PWM or interrupt pins here.
+// For the pushbutton, connect these pins on the Bricktronics Breakout board:
+//  Pin 1 - Connect to Arduino input pin (any digital input pin)
+//  Pin 2 - Connect to Ground
+//  Pin 3 - Connect to Ground
+//  Pin 4 - Connect to 5V
+//  Pin 5 - No connection
+//  Pin 6 - No connection
 //
-// Config 3 - CFG_WNL_NS
-//BricktronicsMotor m(3, 4, 10, 2, 5);
-//BricktronicsButton b(7);
-// Config end
+// The BricktronicsButton() argument is simply the Arduino pin where pin 1
+// on the breakout board is connected.
+//
+BricktronicsMotor m(3, 4, 10, 2, 5);
+BricktronicsButton b(7);
+
 
 
 void setup()
 {
-  // Only call this if you are using a Bricktronics Shield,
-  // otherwise leave it commented-out.
-  // Config 1 - CFG_WNL_BS
-  //BricktronicsShield::begin();
-  // Config end
-
   // Initialize the motor and button connections
   m.begin();
   b.begin();

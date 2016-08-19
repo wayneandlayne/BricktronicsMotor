@@ -38,8 +38,8 @@
 #endif
 
 // Library header files
-#include <Encoder.h>
-#include <PID_v1.h>
+#include "utility/Encoder.h"
+#include "utility/PID_v1.h"
 #include "utility/BricktronicsSettings.h"
 
 // These are the default motor PID values for P, I, and D.

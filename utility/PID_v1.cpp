@@ -52,7 +52,11 @@ bool PID::Compute()
    if(timeChange>=SampleTime)
    {
       /*Compute all the working error variables*/
+
+       // TODO 1. Fix the fucking tabs and shitty formatting in the PID files
+       // TODO 2. Add a mode setting to switch between input and dInput/dTime since last update (for speed control).
 	  double input = *myInput;
+
       double error = *mySetpoint - input;
       ITerm+= (ki * error);
       if(ITerm > outMax) ITerm= outMax;

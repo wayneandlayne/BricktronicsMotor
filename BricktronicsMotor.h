@@ -45,6 +45,7 @@
 // These are the default motor PID values for P, I, and D.
 // Tested on an unloaded NXT 2.0 motor, you may want to adjust these
 // PID constants based on whatever you have connect to your motor.
+// TODO - Should these be different for speed vs position PID control?
 #define BRICKTRONICS_MOTOR_PID_KP                           2.64
 #define BRICKTRONICS_MOTOR_PID_KI                           14.432
 #define BRICKTRONICS_MOTOR_PID_KD                           0.1207317073
@@ -60,9 +61,12 @@
 // as often as this value. Can be updated by the user at runtime if desired.
 #define BRICKTRONICS_MOTOR_PID_SAMPLE_TIME_MS               50
 
+// Check out the comments on the setAngleOutputMultiplier() function for details on this constant.
 #define BRICKTRONICS_MOTOR_ANGLE_MULTIPLIER_DEFAULT         1
+
 // Epsilon is used to evaluate if we are at a desired position (abs(getPosition() - desiredPosition) < epsilon)
 #define BRICKTRONICS_MOTOR_EPSILON_DEFAULT                  5
+
 // This constant is used to determine if the PID algorithm has settled down enough to stop calling update() and just call brake()
 // Used to try and avoid overshoot by stopping PID updates too early.
 #define BRICKTRONICS_MOTOR_PID_OUTPUT_SETTLED_THRESHOLD     30
@@ -225,7 +229,19 @@ class BricktronicsMotor
                     break;
 
                 case BRICKTRONICS_MOTOR_MODE_PID_SPEED:
-                    // TODO create implementation of speed control
+                    _pidInput = _encoder.read();
+                    // input is speed, so ticks / timeframe = dPos / dTime
+                    // TODO add a mode setting for the PID library to change between input = 
+                    // 1. _pidInput
+                    // 2. (_pidInput - _pidInputLastTime) / (millis() - millisLastTime)
+                    _pid.Compute();
+                    _rawSetSpeed(_pidOutput);
+                    /*
+                    Serial.print("_pidOutput: ");
+                    Serial.print(_pidOutput);
+                    Serial.print(", pos: ");
+                    Serial.println(_pidInput);
+                    */
                     break;
 
                 default:

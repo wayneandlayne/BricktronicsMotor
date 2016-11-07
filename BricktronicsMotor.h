@@ -231,7 +231,7 @@ class BricktronicsMotor
                 case BRICKTRONICS_MOTOR_MODE_PID_SPEED:
                     _pidInput = _encoder.read();
                     // input is speed, so ticks / timeframe = dPos / dTime
-                    // TODO add a mode setting for the PID library to change between input = 
+                    // TODO add a mode setting for the PID library to change between input =
                     // 1. _pidInput
                     // 2. (_pidInput - _pidInputLastTime) / (millis() - millisLastTime)
                     _pid.Compute();
@@ -258,7 +258,7 @@ class BricktronicsMotor
             while (millis() < endTime)
             {
                 update();
-                // We could put a delay(5) here, but the PID library already has a 
+                // We could put a delay(5) here, but the PID library already has a
                 // "sample time" parameter to only run so frequent, you know?
             }
         }
@@ -385,8 +385,10 @@ class BricktronicsMotor
             return true;
         }
 
+        // Speed control functions - TODO
+
         // Angle control functions - 0 - 359, handles discontinuity nicely.
-        // Can specify any angle, positive or negative. If you say 
+        // Can specify any angle, positive or negative. If you say
         // "go to angle 721" it will be the same as "go to angle 1".
         // Similarly, "go to angle -60" will be "go to angle 300".
         // If you want "go 45 degrees clockwise from here", try using

@@ -10,6 +10,12 @@
 #define DIRECT      0
 #define REVERSE     1
 
+typedef enum
+{
+    InputMode_Direct,
+    InputMode_Derivative,
+} input_mode_e;
+
 class PID
 {
     public:
@@ -20,6 +26,9 @@ class PID
 
     // Sets PID to either Manual (0) or Auto (non-0)
     void SetMode(int Mode);
+
+    // Sets input mode to either InputMode_Direct or InputMode_Derivative
+    void SetInputMode(input_mode_e InputMode);
 
     // Perform the PID calculation. Should be called every time loop() cycles.
     // ON/OFF and calculation frequency can be set using SetMode and SetSampleTime, respectively.
@@ -71,6 +80,10 @@ class PID
     unsigned long SampleTime;
     double outMin, outMax;
     bool inAuto;
+
+    /* To support speed control with PID, we added a configuration here that
+     * changes Compute() to use dInput/dTime instead of just input. */
+    input_mode_e inputMode;
 };
 #endif /* PID_V1_H */
 

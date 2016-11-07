@@ -53,8 +53,15 @@ bool PID::Compute()
    unsigned long timeChange = (now - lastTime);
    if (timeChange >= SampleTime)
    {
-      // Compute all the working error variables
-      double input = *myInput;
+      double input;
+      if (inputMode == InputMode_Direct)
+      {
+          input = *myInput;
+      }
+      else
+      {
+          input = (lastInput - *myInput) / timeChange;
+      }
 
       double error = *mySetpoint - input;
       ITerm += (ki * error);
@@ -191,6 +198,16 @@ void PID::SetMode(int Mode)
         PID::Initialize();
     }
     inAuto = newAuto;
+}
+
+/* SetInputMode(...) **********************************************************
+ * Sets the input mode to either InputMode_Direct or InputMode_Derivative.
+ * TODO add some more documentation
+ ******************************************************************************/
+void PID::SetInputMode(input_mode_e InputMode)
+{
+    inputMode = InputMode;
+    PID::Initialize();
 }
 
 /* Initialize() ***************************************************************

@@ -68,14 +68,19 @@ void setup()
 
 // This function will be called every millisecond.
 // It just calls update() for each motor.
-SIGNAL(TIMER0_COMPA_vect)
+ISR(TIMER0_COMPA_vect)
 {
-    m.update();
-    // If you have multiple motors, be sure to call all their update
-    // functions here in the interrupt handler...
-    // m2.update();
-    // m3.update();
-    // ...
+    static unsigned char count_ms = 0;
+    if (++count_ms == 50)
+    {
+        m.update();
+        // If you have multiple motors, be sure to call all their update
+        // functions here in the interrupt handler...
+        // m2.update();
+        // m3.update();
+        // ...
+        count_ms = 0;
+    }
 }
 
 void loop()

@@ -5,12 +5,26 @@
 // PID (proportional, integral, derivative) control algorithm to precisely
 // drive the motor to the desired rotation position.
 //
-// This example adds an interrupt to Timer0 to occur every millisecond, which
-// we can use to periodically call our motor's update() function every 25
-// milliseconds. This allows us to do other things instead of managing the
-// motor's update() calls. We can simply set the motor to a new desired
-// position whenever we like, and the interrupt will automatically call the
-// motor's update() function periodically.
+// Each microcontroller has one or more internal timer modules that can be
+// configured to generate a software interrupt on a regular schedule. The
+// Arduino system configures Timer0 to have an interrupt every millisecond,
+// which is updates the variables used by the millis() function.
+// This example adds another interrupt to Timer0 to occur every millisecond,
+// which we can use to periodically call our motor's update() function every
+// 50 milliseconds. By using Timer0 OC0A to generate this interrupt, it uses
+// the same internal arduino chip hardware that would be used to generate a
+// PWM output signal on these pins:
+// * Uno: D6 - Only used as part of sensor port 3, which does not need PWM.
+// * Mega: D13 - Not used by the Bricktronics Shield or Megashield.
+// If you call analogWrite with D6 on Uno or D13 on Mega it will override
+// this new Timer0 OC0A interrupt and cause problems. On non-AVR platforms
+// like Teensy or ChipKit, things will probably work differently. Post in the
+// W&L forums and we'll figure it out: https://discuss.wayneandlayne.com/
+//
+// Using an interrupt allows us to do other things in our main loop without
+// managing the motor's update() calls. We can simply set the motor to a new
+// desired position whenever we like, and the interrupt will automatically
+// call the motor's update() function periodically.
 //
 // This example uses a motor, so it needs more power than a USB port can give.
 // We really don't recommend running motors off of USB ports (they will be
@@ -64,6 +78,11 @@ void setup()
   // millisecond.
   OCR0A = 0x7F;
   TIMSK0 |= _BV(OCIE0A);
+
+  // TODO Timer0 does pwm for mega pins 4 and 13. Pin 4 is used for Motor 6,
+  // so let's figure out which of compare A or B is used for pin 4, and use the
+  // other compare for our 1khz interrupt. Unless analogWrite on pin 4 would mess up
+  // both compare A and B settings?
 }
 
 // This function will be called every millisecond.

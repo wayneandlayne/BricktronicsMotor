@@ -5,12 +5,26 @@
 // PID (proportional, integral, derivative) control algorithm to precisely
 // drive the motor to the desired rotation position.
 //
-// This example adds an interrupt to Timer0 to occur every millisecond, which
-// we can use to periodically call our motor's update() function every 25
-// milliseconds. This allows us to do other things instead of managing the
-// motor's update() calls. We can simply set the motor to a new desired
-// position whenever we like, and the interrupt will automatically call the
-// motor's update() function periodically.
+// Each microcontroller has one or more internal timer modules that can be
+// configured to generate a software interrupt on a regular schedule. The
+// Arduino system configures Timer0 to have an interrupt every millisecond,
+// which is updates the variables used by the millis() function.
+// This example adds another interrupt to Timer0 to occur every millisecond,
+// which we can use to periodically call our motor's update() function every
+// 50 milliseconds. By using Timer0 OC0A to generate this interrupt, it uses
+// the same internal arduino chip hardware that would be used to generate a
+// PWM output signal on these pins:
+// * Uno: D6 - Only used as part of sensor port 3, which does not need PWM.
+// * Mega: D13 - Not used by the Bricktronics Shield or Megashield.
+// If you call analogWrite with D6 on Uno or D13 on Mega it will override
+// this new Timer0 OC0A interrupt and cause problems. On non-AVR platforms
+// like Teensy or ChipKit, things will probably work differently. Post in the
+// W&L forums and we'll figure it out: https://discuss.wayneandlayne.com/
+//
+// Using an interrupt allows us to do other things in our main loop without
+// managing the motor's update() calls. We can simply set the motor to a new
+// desired position whenever we like, and the interrupt will automatically
+// call the motor's update() function periodically.
 //
 // This example uses a motor, so it needs more power than a USB port can give.
 // We really don't recommend running motors off of USB ports (they will be
@@ -68,12 +82,8 @@ void setup()
   // Initialize the motor connections
   m.begin();
 
-  // The Arduino system configures Timer0 to produce an interrupt every
-  // millisecond, which is what makes millis() work.
-  // The interrupts happen when the 8-bit timer overflows from 255 to 0,
-  // and we can add a second interrupt to occur as the timer count passes
-  // a specified compare value (OCR0A), which will also happen every one
-  // millisecond.
+  // These two lines configure the Timer0 Overflow Interrupt.
+  // More details in the comments at the top of this file.
   OCR0A = 0x7F;
   TIMSK0 |= _BV(OCIE0A);
 }
@@ -86,8 +96,8 @@ ISR(TIMER0_COMPA_vect)
     if (++count_ms == 50)
     {
         m.update();
-        // If you have multiple motors, be sure to call all their update
-        // functions here in the interrupt handler...
+        // If you have multiple motors, be sure to call all their
+        // update functions here in the interrupt handler...
         // m2.update();
         // m3.update();
         // ...

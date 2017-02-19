@@ -9,13 +9,6 @@ More details at http://www.wayneandlayne.com/bricktronics/
 * Click the "Clone or download" button on the upper-right side of this page below the pink bar, then select "Download ZIP". Rename the uncompressed folder BricktronicsMotor. Check that the BricktronicsMotor folder contains BricktronicsMotor.cpp and BricktronicsMotor.h
 * Place the BricktronicsMotor library folder into your `<arduinosketchfolder>/libraries/` folder. You may need to create the libraries subfolder if this is your first installed library. Restart the Arduino IDE.
 
-**This library depends on the following other Arduino libraries:**
-* [Brett Beauregard's Arduino PID_v1 Library](https://github.com/br3ttb/Arduino-PID-Library/)
-* [PJRC Encoder Library for Teensy and Arduino](https://www.pjrc.com/teensy/td_libs_Encoder.html)
-
-**One of the examples, MotorPositionControlInterrupt, uses the FlexiTimer2 library to periodically call the motor update function:**
-* [FlexiTimer2 library](https://github.com/wimleers/flexitimer2)
-
 **API Highlights**
 * `BricktronicsMotor(uint8_t enPin, uint8_t dirPin, uint8_t pwmPin, uint8_t encoderPin1, uint8_t encoderPin2)` - Constructor
 * `void begin(void)` - Call the begin function in your setup() function

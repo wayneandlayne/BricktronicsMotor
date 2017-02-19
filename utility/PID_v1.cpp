@@ -76,8 +76,9 @@ bool PID::Compute()
       double dInput = (input - lastInput);
 
       // Compute PID Output
+      // TODO Why is this subtracting the Kd term?
       double output = (kp * error) +
-                      (ITerm) - // TODO wtf, why is this subtracting the Kd term?
+                      (ITerm) -
                       (kd * dInput);
 
       if (output > outMax)
@@ -202,7 +203,6 @@ void PID::SetMode(int Mode)
 
 /* SetInputMode(...) **********************************************************
  * Sets the input mode to either InputMode_Direct or InputMode_Derivative.
- * TODO add some more documentation
  ******************************************************************************/
 void PID::SetInputMode(input_mode_e InputMode)
 {

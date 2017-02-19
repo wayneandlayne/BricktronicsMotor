@@ -388,7 +388,7 @@ class BricktronicsMotor
         // Speed control functions - TODO
         void setControlledSpeed(int32_t speed)
         {
-            // TODO what should the units be here? 
+            // Units are (ticks / ms)
         }
 
         // Angle control functions - 0 - 359, handles discontinuity nicely.

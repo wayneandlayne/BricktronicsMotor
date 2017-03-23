@@ -2,11 +2,6 @@
 
 This library interfaces with LEGO NXT and EV3 motors. It can be used with the [Bricktronics Shield](https://store.wayneandlayne.com/products/bricktronics-shield-kit.html), [Bricktronics Megashield](https://store.wayneandlayne.com/products/bricktronics-megashield-kit.html), or standalone with the [Bricktronics Motor Driver](https://store.wayneandlayne.com/products/bricktronics-motor-driver.html). For the shield/megashield, use the constructor below with the `BricktronicsMotorSettings` struct, otherwise use the constructor below that accepts the raw pin numbers.
 
-Two helper libraries are needed by BricktronicsMotor:
-* https://www.pjrc.com/teensy/td_libs_Encoder.html
-* https://github.com/br3ttb/Arduino-PID-Library/
-  * Be sure to rename unzipped folder PID_v1
-
 # Connection with [Bricktronics Shield](https://store.wayneandlayne.com/products/bricktronics-shield-kit.html)
 
 Use a motor with any motor port on the Bricktronics Shield.

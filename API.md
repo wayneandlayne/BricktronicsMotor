@@ -8,11 +8,7 @@ Use a motor with any motor port on the Bricktronics Shield.
 
 Constructor usage for Bricktronics Shield:
 ```C++
-#include <Wire.h>
-#include <Adafruit_MCP23017.h>
 #include <BricktronicsShield.h>
-#include <Encoder.h>
-#include <PID_v1.h>
 #include <BricktronicsMotor.h>
 BricktronicsMotor m(BricktronicsShield::MOTOR_1);
 ```
@@ -24,8 +20,6 @@ Use a motor with any motor port on the Bricktronics Megashield.
 Constructor usage for Bricktronics Megashield:
 ```C++
 #include <BricktronicsMegashield.h>
-#include <Encoder.h>
-#include <PID_v1.h>
 #include <BricktronicsMotor.h>
 BricktronicsMotor m(BricktronicsMegashield::MOTOR_5);
 ```
@@ -41,8 +35,6 @@ Use a motor with either motor port on the Bricktronics Motor Driver. To power th
 
 Constructor usage for Bricktronics Breakout Board:
 ```C++
-#include <Encoder.h>
-#include <PID_v1.h>
 #include <BricktronicsMotor.h>
 // Constructor arguments are: EN, DIR, PWM, T1, T2
 BricktronicsMotor m(3, 4, 10, 2, 5);
@@ -51,8 +43,6 @@ BricktronicsMotor m(3, 4, 10, 2, 5);
 # Quick Example
 
 ```C++
-#include <Encoder.h>
-#include <PID_v1.h>
 #include <BricktronicsMotor.h>
 
 // Use one of the constructor options listed above.
